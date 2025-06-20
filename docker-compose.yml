@@ -1,0 +1,27 @@
+
+services:
+  techhub.api:
+    image: apiimage
+    build:
+      context: .
+      dockerfile: TechHub.Api/Dockerfile
+    depends_on:
+      - techhub-db   
+      - techhub-redis 
+    volumes:
+      - ./wwwroot/images:/app/wwwroot/images
+  techhub-db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: techhub-db
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=m123@pass
+    ports:
+      - "1433:1433"
+   
+  techhub-redis:
+    image: redis:latest
+    container_name: techhub-redis
+    ports:
+      - "6379:6379"
+       
