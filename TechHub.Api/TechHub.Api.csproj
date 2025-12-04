@@ -10,7 +10,6 @@
   </PropertyGroup>
 
 	<PropertyGroup>
-		<OutDir>$(MSBuildProjectDirectory)/build_output/</OutDir>
 		<DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
 	</PropertyGroup>
 
