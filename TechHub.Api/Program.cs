@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
-using TechHub.Api.Middleware;
+using TechHub.Api.ExceptionHandlers;
 using TechHub.Application;
 using TechHub.Domain;
 using TechHub.Infrastructure;
@@ -18,6 +18,9 @@ builder.Services.AddControllers();
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
@@ -115,9 +118,10 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseExceptionHandler();
+
 app.UseHttpsRedirection();
 
-app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseCors("APIPolicy");
 
