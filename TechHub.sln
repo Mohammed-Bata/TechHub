@@ -19,6 +19,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechHub.Application.UnitTes
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "k6", "k6", "{C641CC22-4C97-4064-917F-66C5BAA68395}"
+	ProjectSection(SolutionItems) = preProject
+		load-test.js = load-test.js
+		soak-test.js = soak-test.js
+		spike-test.js = spike-test.js
+		stress-test.js = stress-test.js
+		ttfb-test.js = ttfb-test.js
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +68,7 @@ Global
 		{75388C6E-A222-4812-AFB0-21352C39FCD9} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{479E0E71-ECDD-49CB-9F86-51C9A81C6B44} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{91DAF78D-9D98-452A-A935-C49A12B06B8E} = {E6B66278-EAD5-4ED2-82CF-D614E196AC41}
+		{C641CC22-4C97-4064-917F-66C5BAA68395} = {E6B66278-EAD5-4ED2-82CF-D614E196AC41}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {25612C21-D6A3-486B-8ECA-2A21876B5652}

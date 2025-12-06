@@ -33,7 +33,7 @@ namespace TechHub.Api.Controllers
         /// <param name="quantity">The quantity of the product to add.</param>
         /// <returns>An APIResponse indicating the result of the operation.</returns>
         [HttpPost("AddItem")]
-        [Authorize]
+        //[Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> AddItemAsync([FromQuery] int productId,
