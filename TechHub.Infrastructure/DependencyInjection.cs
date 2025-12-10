@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using TechHub.Application.Interfaces;
 using TechHub.Infrastructure.Repositories;
 using TechHub.Infrastructure.Services;
@@ -26,7 +27,10 @@ namespace TechHub.Infrastructure
         private static void AddPersistence(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("Database")));
+                options.UseSqlServer(configuration.GetConnectionString("Database"))
+                .EnableSensitiveDataLogging()
+                 .LogTo(Console.WriteLine, LogLevel.Information)
+                );
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserRepository, UserRepository>();
