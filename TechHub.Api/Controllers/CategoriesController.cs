@@ -26,10 +26,7 @@ namespace TechHub.Api.Controllers
             _cache = cache;
         }
 
-        /// <summary>
-        /// Retrieves all categories.
-        /// </summary>
-        /// <returns>An APIResponse containing the list of categories.</returns>
+       
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<APIResponse>> Index()
@@ -49,12 +46,7 @@ namespace TechHub.Api.Controllers
             return Ok(_response);
         }
 
-        /// <summary>
-        /// Creates a new category.
-        /// </summary>
-        /// <param name="category">The category data transfer object containing the details of the category to create.</param>
-        /// <param name="validator">The validator for validating the category DTO.</param>
-        /// <returns>An APIResponse indicating the result of the operation.</returns>
+        
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -95,13 +87,7 @@ namespace TechHub.Api.Controllers
             return Ok(_response);
         }
 
-        /// <summary>
-        /// Updates an existing category.
-        /// </summary>
-        /// <param name="id">The ID of the category to update.</param>
-        /// <param name="categoryDto">The category data transfer object containing the updated details.</param>
-        /// <param name="validator">The validator for validating the category DTO.</param>
-        /// <returns>An APIResponse indicating the result of the operation.</returns>
+       
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -145,11 +131,7 @@ namespace TechHub.Api.Controllers
 
         }
 
-        /// <summary>
-        /// Deletes an existing category by ID.
-        /// </summary>
-        /// <param name="id">The ID of the category to delete.</param>
-        /// <returns>An APIResponse indicating the result of the operation.</returns>
+       
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

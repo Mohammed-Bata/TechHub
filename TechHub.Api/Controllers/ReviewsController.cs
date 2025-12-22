@@ -27,13 +27,7 @@ namespace TechHub.Api.Controllers
             _response = new APIResponse();
         }
 
-        /// <summary>
-        /// Retrieves a paginated list of reviews for a specific product.
-        /// </summary>
-        /// <param name="productId">The ID of the product for which reviews are being retrieved.</param>
-        /// <param name="pageSize">The number of reviews to retrieve per page. Default is 5.</param>
-        /// <param name="pageNumber">The page number to retrieve. Default is 1.</param>
-        /// <returns>An APIResponse containing the list of reviews.</returns>
+       
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<APIResponse>> GetReviews(int productId, int pageSize = 5, int pageNumber = 1)
@@ -45,13 +39,7 @@ namespace TechHub.Api.Controllers
 
             return Ok(_response);
         }
-        /// <summary>
-        /// Submits a review for a specific product.
-        /// </summary>
-        /// <param name="productId">The ID of the product being reviewed.</param>
-        /// <param name="reviewDto">The review data transfer object containing the review details.</param>
-        /// <param name="validator">The validator for validating the review data.</param>
-        /// <returns>An APIResponse indicating the result of the operation.</returns>
+        
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -82,13 +70,6 @@ namespace TechHub.Api.Controllers
             return Ok(_response);
         }
 
-        /// <summary>
-        /// Updates an existing review.
-        /// </summary>
-        /// <param name="id">The ID of the review to update.</param>
-        /// <param name="reviewDto">The review data transfer object containing the updated review details.</param>
-        /// <param name="validator">The validator for validating the review data.</param>
-        /// <returns>An APIResponse indicating the result of the operation.</returns>
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -141,11 +122,7 @@ namespace TechHub.Api.Controllers
             return Ok(_response);
         }
 
-        /// <summary>
-        /// Deletes an existing review.
-        /// </summary>
-        /// <param name="id">The ID of the review to delete.</param>
-        /// <returns>An APIResponse indicating the result of the operation.</returns>
+       
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

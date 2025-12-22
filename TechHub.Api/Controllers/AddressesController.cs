@@ -25,10 +25,7 @@ namespace TechHub.Api.Controllers
             _response = new APIResponse();
         }
 
-        /// <summary>
-        /// Retrieves a list of addresses for the authenticated user.
-        /// </summary>
-        /// <returns>An APIResponse containing the list of addresses.</returns>
+       
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [Authorize]
@@ -43,11 +40,7 @@ namespace TechHub.Api.Controllers
             return Ok(_response);
         }
 
-        /// <summary>
-        /// Retrieves a specific address by its ID for the authenticated user.
-        /// </summary>
-        /// <param name="id">The ID of the address to retrieve.</param>
-        /// <returns>An APIResponse containing the address if found, or an error response if not found or unauthorized.</returns>
+     
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -70,12 +63,7 @@ namespace TechHub.Api.Controllers
             return Ok(_response);
         }
 
-        /// <summary>
-        /// Creates a new address for the authenticated user.
-        /// </summary>
-        /// <param name="addressDto">The address data transfer object containing the details of the address to create.</param>
-        /// <param name="validator">The validator for validating the address data transfer object.</param>
-        /// <returns>An APIResponse containing the created address or an error response if validation fails or the user is unauthorized.</returns>
+       
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -109,13 +97,6 @@ namespace TechHub.Api.Controllers
             return Ok(_response);
         }
 
-        /// <summary>
-        /// Updates an existing address for the authenticated user.
-        /// </summary>
-        /// <param name="id">The ID of the address to update.</param>
-        /// <param name="addressdto">The address data transfer object containing the updated details of the address.</param>
-        /// <param name="validator">The validator for validating the address data transfer object.</param>
-        /// <returns>An APIResponse containing the updated address or an error response if validation fails, the address is not found, or the user is unauthorized.</returns>
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -142,11 +123,7 @@ namespace TechHub.Api.Controllers
             return Ok(_response);
         }
 
-        /// <summary>
-        /// Deletes an address by its ID for the authenticated user.
-        /// </summary>
-        /// <param name="id">The ID of the address to delete.</param>
-        /// <returns>An APIResponse indicating the result of the delete operation.</returns>
+      
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

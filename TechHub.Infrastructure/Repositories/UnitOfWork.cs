@@ -14,8 +14,7 @@ namespace TechHub.Infrastructure.Repositories
     public class UnitOfWork: IUnitOfWork
     {
         private readonly AppDbContext _context;
-        private bool _disposed;
-
+       
         public IUserRepository Users { get; private set; }
         public IWishlistRepository Wishlists { get; private set; }
         public IRepository<Address> Addresses { get; private set; }
@@ -51,19 +50,6 @@ namespace TechHub.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed && disposing)
-            {
-                _context.Dispose();
-            }
-            _disposed = true;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+      
     }
 }

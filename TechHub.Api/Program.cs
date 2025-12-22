@@ -120,6 +120,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler();
 
+if (!app.Environment.IsDevelopment())
+{
+    // Add HSTS middleware
+    app.UseHsts();
+}
+
 app.UseHttpsRedirection();
 
 

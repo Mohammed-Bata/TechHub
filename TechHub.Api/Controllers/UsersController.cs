@@ -27,12 +27,7 @@ namespace TechHub.Api.Controllers
             _tokenService = tokenService;
         }
 
-        /// <summary>
-        /// Registers a new user with the provided registration details.
-        /// </summary>
-        /// <param name="model">The registration request containing user details.</param>
-        /// <param name="validator">The validator for the registration request.</param>
-        /// <returns>An ActionResult indicating the result of the registration process.</returns>
+       
         [HttpPost("Register")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -67,12 +62,7 @@ namespace TechHub.Api.Controllers
             return Ok(_response);
         }
 
-        /// <summary>
-        /// Authenticates a user and generates access and refresh tokens.
-        /// </summary>
-        /// <param name="model">The login request containing user credentials.</param>
-        /// <param name="validator">The validator for the login request.</param>
-        /// <returns>An ActionResult containing the authentication tokens or an error response.</returns>
+       
         [HttpPost("Login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -104,11 +94,7 @@ namespace TechHub.Api.Controllers
 
             return Ok(_response);
         }
-        /// <summary>
-        /// Refreshes the access token using the provided refresh token.
-        /// </summary>
-        /// <param name="model">The tokens object containing the access and refresh tokens.</param>
-        /// <returns>An ActionResult containing the new tokens or an error response.</returns>
+      
         [HttpPost("Refresh")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -138,11 +124,7 @@ namespace TechHub.Api.Controllers
                 return BadRequest(_response);
             }
         }
-        /// <summary>
-        /// Logs out a user by revoking the provided refresh token.
-        /// </summary>
-        /// <param name="model">The tokens object containing the access and refresh tokens.</param>
-        /// <returns>An ActionResult indicating the result of the logout process.</returns>
+        
         [HttpPost("Logout")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

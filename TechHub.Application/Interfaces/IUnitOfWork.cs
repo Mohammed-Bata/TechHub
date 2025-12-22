@@ -10,7 +10,7 @@ using Review = TechHub.Domain.Review;
 
 namespace TechHub.Application.Interfaces
 {
-    public interface IUnitOfWork:IDisposable
+    public interface IUnitOfWork
     {
         IUserRepository Users { get; }
         IWishlistRepository Wishlists { get; }

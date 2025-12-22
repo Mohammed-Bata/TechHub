@@ -27,13 +27,7 @@ namespace TechHub.Api.Controllers
             _response = new APIResponse();
         }
 
-        /// <summary>
-        /// Searches for products based on the provided query parameters.
-        /// </summary>
-        /// <param name="queryParameters">The parameters to filter the products.</param>
-        /// <param name="pageSize">The number of products per page. Default is 9.</param>
-        /// <param name="pageNumber">The page number to retrieve. Default is 1.</param>
-        /// <returns>An APIResponse containing the search results.</returns>
+        
         [HttpGet("search")]        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<APIResponse>> SearchProducts([FromQuery] ProductQueryParameters queryParameters, int pageSize = 9, int pageNumber = 1)
         {
@@ -45,11 +39,7 @@ namespace TechHub.Api.Controllers
             return Ok(_response);
         }
 
-        /// <summary>
-        /// Retrieves a product by its unique identifier.
-        /// </summary>
-        /// <param name="id">The unique identifier of the product.</param>
-        /// <returns>An APIResponse containing the product details if found, or a 404 status if not found.</returns>
+      
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -72,12 +62,7 @@ namespace TechHub.Api.Controllers
             return Ok(_response);
         }
 
-        /// <summary>
-        /// Creates a new product.
-        /// </summary>
-        /// <param name="productDto">The product data transfer object containing product details.</param>
-        /// <param name="validator">The validator for validating the product data.</param>
-        /// <returns>An APIResponse containing the created product details or validation errors.</returns>
+        
         [HttpPost]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -136,13 +121,7 @@ namespace TechHub.Api.Controllers
             return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, _response);
         }
 
-        /// <summary>
-        /// Updates an existing product by its unique identifier.
-        /// </summary>
-        /// <param name="id">The unique identifier of the product to update.</param>
-        /// <param name="updatedProduct">The updated product data transfer object containing new product details.</param>
-        /// <param name="validator">The validator for validating the updated product data.</param>
-        /// <returns>An APIResponse containing the updated product details or validation errors.</returns>
+       
         [HttpPut("{id}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -209,11 +188,7 @@ namespace TechHub.Api.Controllers
             return Ok(_response);
         }
 
-        /// <summary>
-        /// Deletes a product by its unique identifier.
-        /// </summary>
-        /// <param name="id">The unique identifier of the product to delete.</param>
-        /// <returns>An APIResponse indicating the result of the delete operation.</returns>
+      
         [HttpDelete("{id}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]

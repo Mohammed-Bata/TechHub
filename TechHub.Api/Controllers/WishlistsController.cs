@@ -26,10 +26,7 @@ namespace TechHub.Api.Controllers
             _response = new APIResponse();
         }
 
-        /// <summary>
-        /// Retrieves the wishlist for the currently authenticated user.
-        /// </summary>
-        /// <returns>An APIResponse containing the user's wishlist or an error message.</returns>
+        
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -61,11 +58,7 @@ namespace TechHub.Api.Controllers
                 return Ok(_response);
         }
 
-        /// <summary>
-        /// Adds a product to the wishlist for the currently authenticated user.
-        /// </summary>
-        /// <param name="productId">The ID of the product to add to the wishlist.</param>
-        /// <returns>An APIResponse indicating the success or failure of the operation.</returns>
+       
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -96,11 +89,7 @@ namespace TechHub.Api.Controllers
                 return Ok(_response);
         }
 
-        /// <summary>
-        /// Removes a product from the wishlist for the currently authenticated user.
-        /// </summary>
-        /// <param name="productId">The ID of the product to remove from the wishlist.</param>
-        /// <returns>An APIResponse indicating the success or failure of the operation.</returns>
+       
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

@@ -25,11 +25,7 @@ namespace TechHub.Api.Controllers
             _response = new APIResponse();
         }
 
-        /// <summary>
-        /// Retrieves all product images for a given product ID.
-        /// </summary>
-        /// <param name="productId">The ID of the product whose images are to be retrieved.</param>
-        /// <returns>An APIResponse containing the list of product images or an error message.</returns>
+       
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -64,11 +60,7 @@ namespace TechHub.Api.Controllers
             return Ok(_response);
         }
 
-        /// <summary>
-        /// Retrieves a specific product image by its ID.
-        /// </summary>
-        /// <param name="id">The ID of the product image to retrieve.</param>
-        /// <returns>An APIResponse containing the product image or an error message.</returns>
+        
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -91,12 +83,7 @@ namespace TechHub.Api.Controllers
             return Ok(_response);
         }
 
-        /// <summary>
-        /// Adds a new product image for a given product ID.
-        /// </summary>
-        /// <param name="productId">The ID of the product to which the image belongs.</param>
-        /// <param name="productImageDto">The DTO containing the image file and related data.</param>
-        /// <returns>An APIResponse containing the created product image or an error message.</returns>
+        
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -142,11 +129,7 @@ namespace TechHub.Api.Controllers
             return Ok(_response);  
         }
 
-        /// <summary>
-        /// Deletes a specific product image by its ID.
-        /// </summary>
-        /// <param name="id">The ID of the product image to delete.</param>
-        /// <returns>An IActionResult indicating the result of the operation.</returns>
+       
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

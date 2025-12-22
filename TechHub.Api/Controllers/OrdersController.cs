@@ -38,11 +38,7 @@ namespace TechHub.Api.Controllers
             _paymentService = paymentService;
         }
 
-        /// <summary>
-        /// Retrieves an order by its ID for the authenticated user.
-        /// </summary>
-        /// <param name="id">The ID of the order to retrieve.</param>
-        /// <returns>An APIResponse containing the order details if found, or an appropriate error response.</returns>
+        
         [HttpGet("{id}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -73,10 +69,7 @@ namespace TechHub.Api.Controllers
 
             return Ok(_response);
         }
-        /// <summary>
-        /// Retrieves all orders for the authenticated user.
-        /// </summary>
-        /// <returns>An APIResponse containing the list of orders if successful, or an appropriate error response.</returns>
+        
         [HttpGet]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -98,12 +91,7 @@ namespace TechHub.Api.Controllers
 
             return Ok(_response);
         }
-        /// <summary>
-        /// Creates a new order for the authenticated user.
-        /// </summary>
-        /// <param name="orderDto">The order details to create.</param>
-        /// <param name="validator">The validator for the order details.</param>
-        /// <returns>An APIResponse containing the created order details if successful, or an appropriate error response.</returns>
+       
         [HttpPost]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]

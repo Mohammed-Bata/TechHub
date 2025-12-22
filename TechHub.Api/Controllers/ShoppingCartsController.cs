@@ -26,14 +26,9 @@ namespace TechHub.Api.Controllers
             _response = new APIResponse();
         }
 
-        /// <summary>
-        /// Adds an item to the shopping cart for the authenticated user.
-        /// </summary>
-        /// <param name="productId">The ID of the product to add.</param>
-        /// <param name="quantity">The quantity of the product to add.</param>
-        /// <returns>An APIResponse indicating the result of the operation.</returns>
+       
         [HttpPost("AddItem")]
-        //[Authorize]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> AddItemAsync([FromQuery] int productId,
@@ -58,11 +53,7 @@ namespace TechHub.Api.Controllers
             return BadRequest(_response);
         }
 
-        /// <summary>
-        /// Removes an item from the shopping cart for the authenticated user.
-        /// </summary>
-        /// <param name="itemId">The ID of the item to remove.</param>
-        /// <returns>An APIResponse indicating the result of the operation.</returns>
+
         [HttpDelete("RemoveItem/{itemId}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
