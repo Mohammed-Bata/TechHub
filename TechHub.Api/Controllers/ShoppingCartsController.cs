@@ -5,7 +5,7 @@ using System.Net;
 using System.Security.Claims;
 using TechHub.Application.DTOs;
 using TechHub.Application.Interfaces;
-using TechHub.Domain;
+using TechHub.Domain.Entities;
 using TechHub.Infrastructure.Repositories;
 using TechHub.Infrastructure.Services;
 
@@ -31,7 +31,7 @@ namespace TechHub.Api.Controllers
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> AddItemAsync([FromQuery] int productId,
+        public async Task<ActionResult<APIResponse>> AddItemAsync([FromQuery] Guid productId,
             [FromQuery] int quantity)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -59,7 +59,7 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> RemoveItemAsync(int itemId)
+        public async Task<ActionResult<APIResponse>> RemoveItemAsync(Guid itemId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var result = await _unitOfWork.Carts.RemoveItemAsync(userId, itemId);

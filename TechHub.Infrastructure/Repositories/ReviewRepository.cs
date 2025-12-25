@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechHub.Application.Interfaces;
-using TechHub.Domain;
+using TechHub.Domain.Entities;
 
 namespace TechHub.Infrastructure.Repositories
 {
@@ -23,7 +23,7 @@ namespace TechHub.Infrastructure.Repositories
             await UpdateProductRating(review.ProductId);
         
         }
-        public async Task DeleteReview(int reviewId)
+        public async Task DeleteReview(Guid reviewId)
         {
             var review = await _context.Reviews.FirstOrDefaultAsync(r => r.Id == reviewId);
             if (review != null)
@@ -46,7 +46,7 @@ namespace TechHub.Infrastructure.Repositories
             await Task.CompletedTask;
         }
 
-        private async Task UpdateProductRating(int productId)
+        private async Task UpdateProductRating(Guid productId)
         {
             var product = await _context.Products.Include(p => p.Reviews).FirstOrDefaultAsync(p => p.Id == productId);
             if (product != null)

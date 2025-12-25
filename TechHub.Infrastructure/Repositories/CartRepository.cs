@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechHub.Application.Interfaces;
-using TechHub.Domain;
+using TechHub.Domain.Entities;
 
 namespace TechHub.Infrastructure.Repositories
 {
@@ -46,7 +46,7 @@ namespace TechHub.Infrastructure.Repositories
 
             return cart;
         }
-        public async Task<bool> RemoveItemAsync(string userId, int itemId)
+        public async Task<bool> RemoveItemAsync(string userId, Guid itemId)
         {
             var cart = await GetCartWithItemsAsync(userId);
             var item = cart.Items.FirstOrDefault(x => x.Id == itemId);
@@ -61,7 +61,7 @@ namespace TechHub.Infrastructure.Repositories
             
             return true;
         }
-        public async Task<ShoppingCartItem> AddItemAsync(string userId, int productId, int quantity)
+        public async Task<ShoppingCartItem> AddItemAsync(string userId, Guid productId, int quantity)
         {
             if (quantity <= 0)
             {

@@ -9,10 +9,9 @@ using System.Security.Claims;
 using TechHub.Application.DTOs;
 using TechHub.Application.Interfaces;
 using TechHub.Application.Services;
-using TechHub.Domain;
 using TechHub.Infrastructure.Repositories;
 using TechHub.Infrastructure.Services;
-using Order = TechHub.Domain.Order;
+using Order = TechHub.Domain.Entities.Order;
 using OrderService = TechHub.Application.Services.OrderService;
 
 namespace TechHub.Api.Controllers
@@ -44,7 +43,7 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<APIResponse>> GetOrder(int id)
+        public async Task<ActionResult<APIResponse>> GetOrder(Guid id)
         {
 
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechHub.Application.Interfaces;
-using TechHub.Domain;
+using TechHub.Domain.Entities;
 
 namespace TechHub.Infrastructure.Repositories
 {

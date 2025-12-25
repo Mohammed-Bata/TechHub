@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TechHub.Domain;
+using TechHub.Domain.Entities;
 
 namespace TechHub.Application.Interfaces
 {
@@ -11,7 +11,7 @@ namespace TechHub.Application.Interfaces
     {
         Task<ShoppingCart> CreateCartAsync(string userId);
         Task<ShoppingCart> GetCartWithItemsAsync(string userId);
-        Task<bool> RemoveItemAsync(string userId, int itemId);
-        Task<ShoppingCartItem> AddItemAsync(string userId, int productId, int quantity);
+        Task<bool> RemoveItemAsync(string userId, Guid itemId);
+        Task<ShoppingCartItem> AddItemAsync(string userId, Guid productId, int quantity);
     }
 }

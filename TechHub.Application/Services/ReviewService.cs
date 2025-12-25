@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TechHub.Application.DTOs;
 using TechHub.Application.Interfaces;
-using TechHub.Domain;
+using TechHub.Domain.Entities;
 
 namespace TechHub.Application.Services
 {
@@ -23,7 +23,7 @@ namespace TechHub.Application.Services
             _cache = cache;
         }
 
-        public async Task<List<Review>> GetReviews(int productId, int pageSize = 5, int pageNumber = 1)
+        public async Task<List<Review>> GetReviews(Guid productId, int pageSize = 5, int pageNumber = 1)
         {
             string cacheKey = $"reviews_{productId}_{pageSize}_{pageNumber}";
             var cachedReviews = await _cache.GetAsync<List<Review>>(cacheKey);
@@ -38,7 +38,7 @@ namespace TechHub.Application.Services
             return reviews.ToList();
         }
 
-        public async Task<Review> PostReview(int productId,ReviewDto reviewDto,string userId)
+        public async Task<Review> PostReview(Guid productId,ReviewDto reviewDto,string userId)
         {
             var review = await _unitOfWork.Reviews.GetAsync(x => x.ProductId == productId && x.UserId == userId);
             if (review != null)
@@ -63,7 +63,7 @@ namespace TechHub.Application.Services
             return newreview;
         }
 
-        public async Task<Review> GetReview(int id)
+        public async Task<Review> GetReview(Guid id)
         {
             var review = await _unitOfWork.Reviews.GetAsync(x => x.Id == id);
             if (review == null)
@@ -73,7 +73,7 @@ namespace TechHub.Application.Services
             return review;
         }
 
-        public async Task<bool> PutReview(int id,ReviewDto reviewDto)
+        public async Task<bool> PutReview(Guid id,ReviewDto reviewDto)
         {
                 var review = await _unitOfWork.Reviews.GetAsync(x => x.Id == id);
 
@@ -92,7 +92,7 @@ namespace TechHub.Application.Services
                 return true;
         }
 
-        public async Task<bool> DeleteReview(int id)
+        public async Task<bool> DeleteReview(Guid id)
         {
 
             var review = await _unitOfWork.Reviews.GetAsync(x => x.Id == id);
@@ -101,7 +101,7 @@ namespace TechHub.Application.Services
 
             var rev = await _unitOfWork.Reviews.GetAll();
 
-            await _unitOfWork.Reviews.DeleteReview(id);
+            //await _unitOfWork.Reviews.DeleteReview(id);
             await _unitOfWork.SaveChangesAsync();
 
             var total = rev.Count();

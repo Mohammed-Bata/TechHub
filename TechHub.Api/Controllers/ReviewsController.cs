@@ -30,7 +30,7 @@ namespace TechHub.Api.Controllers
        
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<APIResponse>> GetReviews(int productId, int pageSize = 5, int pageNumber = 1)
+        public async Task<ActionResult<APIResponse>> GetReviews(Guid productId, int pageSize = 5, int pageNumber = 1)
         {
             var reviews = await _reviewService.GetReviews(productId, pageSize, pageNumber);
 
@@ -45,7 +45,7 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Authorize]
-        public async Task<ActionResult<APIResponse>> PostReview(int productId, [FromBody] ReviewDto reviewDto, IValidator<ReviewDto> validator)
+        public async Task<ActionResult<APIResponse>> PostReview(Guid productId, [FromBody] ReviewDto reviewDto, IValidator<ReviewDto> validator)
         {
             var validationResult = await validator.ValidateAsync(reviewDto);
             if (!validationResult.IsValid)
@@ -76,7 +76,7 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize]
-        public async Task<ActionResult<APIResponse>> PutReview(int id, [FromBody] ReviewDto reviewDto, IValidator<ReviewDto> validator)
+        public async Task<ActionResult<APIResponse>> PutReview(Guid id, [FromBody] ReviewDto reviewDto, IValidator<ReviewDto> validator)
         {
             var validationResult = await validator.ValidateAsync(reviewDto);
             if (!validationResult.IsValid)
@@ -128,7 +128,7 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize]
-        public async Task<ActionResult<APIResponse>> DeleteReview(int id)
+        public async Task<ActionResult<APIResponse>> DeleteReview(Guid id)
         {
             var review = await _reviewService.GetReview(id);
             if (review == null)

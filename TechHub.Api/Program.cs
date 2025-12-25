@@ -4,9 +4,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
+using System.Threading.RateLimiting;
 using TechHub.Api.ExceptionHandlers;
 using TechHub.Application;
-using TechHub.Domain;
 using TechHub.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +16,55 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+    {
+        var userId = context.User.Identity?.Name?? context.Connection.RemoteIpAddress?.ToString()??"unknown";
+        return RateLimitPartition.GetFixedWindowLimiter(partitionKey: userId, factory: partition => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 100,
+            Window = TimeSpan.FromSeconds(10),
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            QueueLimit = 20
+        });
+    });
+
+    options.AddPolicy("commands", context =>
+    {
+        var userId = context.User.Identity?.Name ?? context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+        return RateLimitPartition.GetSlidingWindowLimiter(partitionKey: userId, factory: partition => new SlidingWindowRateLimiterOptions
+        {
+            PermitLimit = 10,
+            Window = TimeSpan.FromSeconds(60),
+            SegmentsPerWindow = 6,
+            AutoReplenishment = true,
+        });
+    });
+
+    options.AddPolicy("queries", context =>
+    {
+        var userId = context.User.Identity?.Name ?? context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        return RateLimitPartition.GetTokenBucketLimiter(partitionKey: userId, factory: partition => new TokenBucketRateLimiterOptions
+        {
+            TokenLimit = 50,
+            TokensPerPeriod = 10,
+            ReplenishmentPeriod = TimeSpan.FromSeconds(20),
+            AutoReplenishment = true,
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            QueueLimit = 40
+        });
+    });
+
+    options.OnRejected = async (context, cancellationToken) =>
+    {
+        context.HttpContext.Response.StatusCode = 429;
+        await context.HttpContext.Response.WriteAsync("Too many requests. Please try again later.", cancellationToken);
+    };
+
+});
+
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -24,7 +73,7 @@ builder.Services.AddProblemDetails();
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
-    options.Password.RequiredLength = 6;
+    options.Password.RequiredLength = 8;
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequireUppercase = true;
     options.Password.RequireLowercase = true;
@@ -126,8 +175,9 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+app.UseRateLimiter();
 
+app.UseHttpsRedirection();
 
 app.UseCors("APIPolicy");
 

@@ -6,12 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TechHub.Domain
+namespace TechHub.Domain.Entities
 {
     public class Order
     {
        
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public int? AddressId { get; set; }
         
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;

@@ -8,11 +8,11 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace TechHub.Domain
+namespace TechHub.Domain.Entities
 {
     public class Product
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
 
         [DataType(DataType.MultilineText)]
@@ -22,7 +22,7 @@ namespace TechHub.Domain
         {
             get
             {
-                return Price - (Price * Discount);
+                return Price - Price * Discount;
             }
         }
         public int StockAmount { get; set; }

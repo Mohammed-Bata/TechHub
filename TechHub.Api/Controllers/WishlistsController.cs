@@ -5,7 +5,7 @@ using System.Net;
 using System.Security.Claims;
 using TechHub.Application.DTOs;
 using TechHub.Application.Interfaces;
-using TechHub.Domain;
+using TechHub.Domain.Entities;
 using TechHub.Infrastructure.Repositories;
 using TechHub.Infrastructure.Services;
 
@@ -63,7 +63,7 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize]
-        public async Task<ActionResult<APIResponse>> AddToWishlist(int productId)
+        public async Task<ActionResult<APIResponse>> AddToWishlist(Guid productId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -93,7 +93,7 @@ namespace TechHub.Api.Controllers
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> RemoveWishlistProduct(int productId)
+        public async Task<ActionResult<APIResponse>> RemoveWishlistProduct(Guid productId)
         {
 
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

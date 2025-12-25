@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using TechHub.Application.DTOs;
 using TechHub.Application.Interfaces;
-using TechHub.Domain;
+using TechHub.Domain.Entities;
 using TechHub.Infrastructure.Repositories;
 using TechHub.Infrastructure.Services;
 
@@ -31,7 +31,7 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize]
-        public async Task<ActionResult<APIResponse>> GetProductImages(int productId)
+        public async Task<ActionResult<APIResponse>> GetProductImages(Guid productId)
         {
             string cacheKey = $"productImages_{productId}";
             var cachedImages = await _cache.GetAsync<List<ProductImage>>(cacheKey);
@@ -88,7 +88,7 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize]
-        public async Task<ActionResult<APIResponse>> PostProductImage(int productId, [FromForm] ProductImageDto productImageDto)
+        public async Task<ActionResult<APIResponse>> PostProductImage(Guid productId, [FromForm] ProductImageDto productImageDto)
         {  
             if (productImageDto == null || productImageDto.Image.Length == 0)
             {

@@ -8,7 +8,7 @@ using System.Security.Claims;
 using TechHub.Application.DTOs;
 using TechHub.Application.Interfaces;
 using TechHub.Application.Services;
-using TechHub.Domain;
+using TechHub.Domain.Entities;
 using TechHub.Infrastructure.Repositories;
 
 namespace TechHub.Api.Controllers

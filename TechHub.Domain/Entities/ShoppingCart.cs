@@ -8,12 +8,12 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace TechHub.Domain
+namespace TechHub.Domain.Entities
 {
     public class ShoppingCart
     {
   
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public decimal Price
         {
             get

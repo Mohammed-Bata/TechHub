@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using TechHub.Application.DTOs;
 using TechHub.Application.Interfaces;
 using TechHub.Application.Services;
-using TechHub.Domain;
+using TechHub.Domain.Entities;
 
 namespace TechHub.Application.UnitTests
 {

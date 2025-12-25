@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using TechHub.Application.DTOs;
 using TechHub.Application.Interfaces;
-using TechHub.Domain;
+using TechHub.Domain.Entities;
 using TechHub.Infrastructure.Repositories;
 using TechHub.Infrastructure.Services;
 

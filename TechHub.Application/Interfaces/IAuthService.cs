@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechHub.Application.DTOs;
-using TechHub.Domain;
+using TechHub.Domain.Entities;
 
 namespace TechHub.Application.Interfaces
 {

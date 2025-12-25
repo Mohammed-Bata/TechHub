@@ -8,13 +8,12 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace TechHub.Domain
+namespace TechHub.Domain.Entities
 {
     public class Address
     {
         public int Id { get; set; }
         public string UserId { get; set; }
-        
         public string Street { get; set; }
         public string City { get; set; }
         public string Governorate { get; set; }

@@ -5,12 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TechHub.Domain
+namespace TechHub.Domain.Entities
 {
     public class RefreshToken
     {
-        [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string UserId { get; set; }
         public string JwtTokenId { get; set; }
         public DateTime ExpiresAt { get; set; }

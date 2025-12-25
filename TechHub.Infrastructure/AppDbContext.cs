@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
-using TechHub.Domain;
+using TechHub.Domain.Entities;
 
 namespace TechHub.Infrastructure
 {

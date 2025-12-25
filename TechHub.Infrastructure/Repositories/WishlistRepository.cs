@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechHub.Application.Interfaces;
-using TechHub.Domain;
+using TechHub.Domain.Entities;
 
 namespace TechHub.Infrastructure.Repositories
 {
@@ -39,7 +39,7 @@ namespace TechHub.Infrastructure.Repositories
             return list;
         }
 
-        public async Task<bool> AddProductToWishlist(int productId, string userId)
+        public async Task<bool> AddProductToWishlist(Guid productId, string userId)
         {
             var wishlist = await GetWishlistByUserId(userId);
             if (wishlist is null)
@@ -63,7 +63,7 @@ namespace TechHub.Infrastructure.Repositories
             return false;
         }
 
-        public async Task<bool> RemoveFromWishlist(int productId, string userId)
+        public async Task<bool> RemoveFromWishlist(Guid productId, string userId)
         {
             var wishlist = await GetWishlistByUserId(userId);
             if (wishlist is null)

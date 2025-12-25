@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 using TechHub.Application.DTOs;
 using TechHub.Application.Interfaces;
 using TechHub.Application.Services;
-using TechHub.Domain;
-using Product = TechHub.Domain.Product;
+using TechHub.Domain.Entities;
+using Product = TechHub.Domain.Entities.Product;
 
 namespace TechHub.Application.UnitTests
 {

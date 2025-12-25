@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechHub.Application.Interfaces;
-using TechHub.Domain;
-using Address = TechHub.Domain.Address;
-using Review = TechHub.Domain.Review;
+using TechHub.Domain.Entities;
+using Address = TechHub.Domain.Entities.Address;
+using Review = TechHub.Domain.Entities.Review;
 
 namespace TechHub.Infrastructure.Repositories
 {

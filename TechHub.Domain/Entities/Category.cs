@@ -7,11 +7,10 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace TechHub.Domain
+namespace TechHub.Domain.Entities
 {
     public class Category
     {
-       
         public int Id { get; set; }
         public string Name { get; set; }
        

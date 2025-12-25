@@ -7,6 +7,7 @@ using System.Net;
 using TechHub.Application.DTOs;
 using TechHub.Application.Interfaces;
 using TechHub.Domain;
+using TechHub.Domain.Entities;
 using TechHub.Infrastructure.Repositories;
 using TechHub.Infrastructure.Services;
 
@@ -43,7 +44,7 @@ namespace TechHub.Api.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetProduct(int id)
+        public async Task<ActionResult<APIResponse>> GetProduct(Guid id)
         {
            
             var product = await _unitOfWork.Products.GetAsync(p => p.Id == id, includes: o => o.Include("Category").Include("Reviews"));
@@ -127,7 +128,7 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> UpdateProduct(int id, [FromForm] ProductDto updatedProduct,
+        public async Task<ActionResult<APIResponse>> UpdateProduct(Guid id, [FromForm] ProductDto updatedProduct,
             IValidator<ProductDto> validator)
         {
             var validationResult = await validator.ValidateAsync(updatedProduct);
@@ -194,7 +195,7 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> DeleteProduct(int id)
+        public async Task<ActionResult<APIResponse>> DeleteProduct(Guid id)
         {
             var product = await _unitOfWork.Products.GetAsync(p => p.Id == id);
             if (product == null)

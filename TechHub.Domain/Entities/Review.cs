@@ -8,12 +8,11 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace TechHub.Domain
+namespace TechHub.Domain.Entities
 {
     public class Review
     {
-     
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [DataType(DataType.MultilineText)]
         public string Content { get; set; }
@@ -21,8 +20,7 @@ namespace TechHub.Domain
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         public string UserId { get; set; }
-        
-        public int ProductId { get; set; }
+        public Guid ProductId { get; set; }
        
     }
 }

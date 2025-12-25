@@ -8,10 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using TechHub.Application.DTOs;
 using TechHub.Application.Interfaces;
-using TechHub.Domain;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
-using Product = TechHub.Domain.Product;
+using Product = TechHub.Domain.Entities.Product;
+using TechHub.Domain.Entities;
 
 namespace TechHub.Application.Services
 {
@@ -31,7 +31,7 @@ namespace TechHub.Application.Services
             _emailService = emailService;
         }
 
-        public async Task<Order> GetOrder(int id,string userId)
+        public async Task<Order> GetOrder(Guid id,string userId)
         {
             var cacheKey = $"Order_{id}_{userId}";
             var cachedOrder = await _cache.GetAsync<Order>(cacheKey);

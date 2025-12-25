@@ -12,8 +12,8 @@ using TechHub.Infrastructure;
 namespace TechHub.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250514102757_address")]
-    partial class address
+    [Migration("20251224230306_recreatedatabase")]
+    partial class recreatedatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -158,7 +158,7 @@ namespace TechHub.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("TechHub.Domain.Address", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.Address", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -197,36 +197,7 @@ namespace TechHub.Infrastructure.Migrations
                     b.ToTable("Address");
                 });
 
-            modelBuilder.Entity("TechHub.Domain.AppUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AppUser");
-                });
-
-            modelBuilder.Entity("TechHub.Domain.Category", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -247,13 +218,11 @@ namespace TechHub.Infrastructure.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("TechHub.Domain.Order", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.Order", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int?>("AddressId")
                         .HasColumnType("int");
@@ -278,19 +247,17 @@ namespace TechHub.Infrastructure.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("TechHub.Domain.OrderItem", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.OrderItem", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -307,13 +274,11 @@ namespace TechHub.Infrastructure.Migrations
                     b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("TechHub.Domain.Product", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.Product", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("AverageRating")
                         .ValueGeneratedOnAdd()
@@ -373,7 +338,7 @@ namespace TechHub.Infrastructure.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("TechHub.Domain.ProductImage", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.ProductImage", b =>
                 {
                     b.Property<int>("ImageId")
                         .ValueGeneratedOnAdd()
@@ -381,8 +346,8 @@ namespace TechHub.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ImageId"));
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ImageLocalPath")
                         .IsRequired()
@@ -399,13 +364,13 @@ namespace TechHub.Infrastructure.Migrations
                     b.ToTable("ProductImages");
                 });
 
-            modelBuilder.Entity("TechHub.Domain.ProductWishlist", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.ProductWishlist", b =>
                 {
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("WishlistId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("WishlistId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ProductId", "WishlistId");
 
@@ -414,13 +379,11 @@ namespace TechHub.Infrastructure.Migrations
                     b.ToTable("ProductWishlists");
                 });
 
-            modelBuilder.Entity("TechHub.Domain.RefreshToken", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.RefreshToken", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime");
@@ -445,13 +408,11 @@ namespace TechHub.Infrastructure.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
-            modelBuilder.Entity("TechHub.Domain.Review", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.Review", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -461,8 +422,8 @@ namespace TechHub.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Rating")
                         .HasColumnType("int");
@@ -483,13 +444,11 @@ namespace TechHub.Infrastructure.Migrations
                     b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("TechHub.Domain.ShoppingCart", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.ShoppingCart", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -503,25 +462,23 @@ namespace TechHub.Infrastructure.Migrations
                     b.ToTable("Carts");
                 });
 
-            modelBuilder.Entity("TechHub.Domain.ShoppingCartItem", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.ShoppingCartItem", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int>("ShoppingCartId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ShoppingCartId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -532,13 +489,11 @@ namespace TechHub.Infrastructure.Migrations
                     b.ToTable("CartItems");
                 });
 
-            modelBuilder.Entity("TechHub.Domain.Wishlist", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.Wishlist", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime");
@@ -692,18 +647,16 @@ namespace TechHub.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TechHub.Domain.Address", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.Address", b =>
                 {
-                    b.HasOne("TechHub.Domain.AppUser", "User")
+                    b.HasOne("TechHub.Infrastructure.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("TechHub.Domain.Order", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.Order", b =>
                 {
                     b.HasOne("TechHub.Infrastructure.ApplicationUser", null)
                         .WithMany()
@@ -712,28 +665,26 @@ namespace TechHub.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TechHub.Domain.OrderItem", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.OrderItem", b =>
                 {
-                    b.HasOne("TechHub.Domain.Order", "Order")
-                        .WithMany()
+                    b.HasOne("TechHub.Domain.Entities.Order", null)
+                        .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TechHub.Domain.Product", "Product")
+                    b.HasOne("TechHub.Domain.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Order");
-
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("TechHub.Domain.Product", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.Product", b =>
                 {
-                    b.HasOne("TechHub.Domain.Category", "Category")
+                    b.HasOne("TechHub.Domain.Entities.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -742,24 +693,24 @@ namespace TechHub.Infrastructure.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("TechHub.Domain.ProductImage", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.ProductImage", b =>
                 {
-                    b.HasOne("TechHub.Domain.Product", null)
+                    b.HasOne("TechHub.Domain.Entities.Product", null)
                         .WithMany("Images")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TechHub.Domain.ProductWishlist", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.ProductWishlist", b =>
                 {
-                    b.HasOne("TechHub.Domain.Product", "Product")
+                    b.HasOne("TechHub.Domain.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TechHub.Domain.Wishlist", null)
+                    b.HasOne("TechHub.Domain.Entities.Wishlist", null)
                         .WithMany("Products")
                         .HasForeignKey("WishlistId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -768,9 +719,9 @@ namespace TechHub.Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("TechHub.Domain.Review", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.Review", b =>
                 {
-                    b.HasOne("TechHub.Domain.Product", "Product")
+                    b.HasOne("TechHub.Domain.Entities.Product", null)
                         .WithMany("Reviews")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -781,28 +732,26 @@ namespace TechHub.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("TechHub.Domain.ShoppingCart", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.ShoppingCart", b =>
                 {
                     b.HasOne("TechHub.Infrastructure.ApplicationUser", null)
                         .WithOne()
-                        .HasForeignKey("TechHub.Domain.ShoppingCart", "UserId")
+                        .HasForeignKey("TechHub.Domain.Entities.ShoppingCart", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TechHub.Domain.ShoppingCartItem", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.ShoppingCartItem", b =>
                 {
-                    b.HasOne("TechHub.Domain.Product", "Product")
+                    b.HasOne("TechHub.Domain.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TechHub.Domain.ShoppingCart", null)
+                    b.HasOne("TechHub.Domain.Entities.ShoppingCart", null)
                         .WithMany("Items")
                         .HasForeignKey("ShoppingCartId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -811,28 +760,33 @@ namespace TechHub.Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("TechHub.Domain.Wishlist", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.Wishlist", b =>
                 {
                     b.HasOne("TechHub.Infrastructure.ApplicationUser", null)
                         .WithOne()
-                        .HasForeignKey("TechHub.Domain.Wishlist", "UserId")
+                        .HasForeignKey("TechHub.Domain.Entities.Wishlist", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TechHub.Domain.Product", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.Order", b =>
+                {
+                    b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("TechHub.Domain.Entities.Product", b =>
                 {
                     b.Navigation("Images");
 
                     b.Navigation("Reviews");
                 });
 
-            modelBuilder.Entity("TechHub.Domain.ShoppingCart", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.ShoppingCart", b =>
                 {
                     b.Navigation("Items");
                 });
 
-            modelBuilder.Entity("TechHub.Domain.Wishlist", b =>
+            modelBuilder.Entity("TechHub.Domain.Entities.Wishlist", b =>
                 {
                     b.Navigation("Products");
                 });

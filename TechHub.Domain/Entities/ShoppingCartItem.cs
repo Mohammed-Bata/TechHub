@@ -8,14 +8,13 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace TechHub.Domain
+namespace TechHub.Domain.Entities
 {
     public class ShoppingCartItem
     {
-        public int Id { get; set; }
-        public int ShoppingCartId { get; set; }
-        
-        public int ProductId { get; set; }
+        public Guid Id { get; set; }
+        public Guid ShoppingCartId { get; set; }
+        public Guid ProductId { get; set; }
         
         public Product Product { get; set; }
         public int Quantity { get; set; }
