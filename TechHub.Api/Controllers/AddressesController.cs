@@ -1,10 +1,16 @@
 ﻿using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Security.Claims;
+using TechHub.Application.Addresses.Commands.CreateAddress;
+using TechHub.Application.Addresses.Commands.DeleteAddress;
+using TechHub.Application.Addresses.Commands.UpdateAddress;
+using TechHub.Application.Addresses.Queries.GetAddress;
+using TechHub.Application.Addresses.Queries.GetAddresses;
 using TechHub.Application.DTOs;
 using TechHub.Application.Interfaces;
 using TechHub.Application.Services;
@@ -17,27 +23,26 @@ namespace TechHub.Api.Controllers
     [ApiController]
     public class AddressesController : ControllerBase
     {
-        private readonly AddressService _addressService;
-        private readonly APIResponse _response;
-        public AddressesController(AddressService addressService)
+       
+
+        private readonly IMediator _mediator;
+
+        public AddressesController(IMediator mediator)
         {
-            _addressService = addressService;
-            _response = new APIResponse();
+            _mediator = mediator;
         }
 
-       
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [Authorize]
-        public async Task<ActionResult<APIResponse>> GetAddresses()
+        //[Authorize]
+        public async Task<IActionResult> GetAddresses()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            var Addresses = await _addressService.GetAddresses(userId);
-            _response.Data = Addresses;
-            _response.StatusCode = HttpStatusCode.OK;
+            var addresses = await _mediator.Send(new GetAddressesQuery(userId));
+            return Ok(addresses);
 
-            return Ok(_response);
         }
 
      
@@ -45,22 +50,13 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize]
-        public async Task<ActionResult<Address>> GetAddress(int id)
+        public async Task<IActionResult> GetAddress(int id)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             
-            var address = await _addressService.GetAddress(id, userId);
-            if (address == null)
-            {
-                _response.StatusCode = HttpStatusCode.NotFound;
-                _response.Errors = new List<string> { "Address Not Found" };
-                return NotFound(_response);
-            }
+            var address = await _mediator.Send(new GetAddressQuery(id, userId));
 
-            _response.StatusCode = HttpStatusCode.OK;
-            _response.Data = address;
-
-            return Ok(_response);
+            return Ok(address);
         }
 
        
@@ -69,32 +65,18 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Authorize]
-        public async Task<ActionResult<APIResponse>> CreateAddress([FromBody] AddressDto addressDto,
-            IValidator<AddressDto> validator)
+        public async Task<IActionResult> CreateAddress([FromBody] AddressDto addressDto)
         {
-            var validationResult = await validator.ValidateAsync(addressDto);
-
-            if (!validationResult.IsValid)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return BadRequest(_response);
-            }
-
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null)
-            {
-                _response.StatusCode = HttpStatusCode.Unauthorized;
-                _response.Errors = new List<string> { "User not authorized" };
-                return Unauthorized(_response);
-            }
+            var addressId = await _mediator.Send(new CreateAddressCommand(
+                addressDto.Street,
+                addressDto.City,
+                addressDto.Governorate,
+                addressDto.PostalCode,
+                userId));
 
-            var entity = await _addressService.CreateAddress(addressDto, userId);
+            return CreatedAtAction(nameof(GetAddress), new { id = addressId }, addressDto);
 
-            _response.Data = entity;
-            _response.StatusCode = HttpStatusCode.Created;
-
-            return Ok(_response);
         }
 
         [HttpPut("{id}")]
@@ -103,24 +85,22 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Authorize]
-        public async Task<ActionResult<APIResponse>> UpdateAddress(int id,
-            [FromBody] AddressDto addressdto,
-            IValidator<AddressDto> validator)
+        public async Task<IActionResult> UpdateAddress(int id,
+            [FromBody] AddressDto addressdto)
         {
-            var validationResult = await validator.ValidateAsync(addressdto);
-            if (!validationResult.IsValid)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return BadRequest(_response);
-            }
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
+            var addressId = await _mediator.Send(new UpdateAddressCommand(
+                id,
+                addressdto.Street,
+                addressdto.City,
+                addressdto.Governorate,
+                addressdto.PostalCode,
+                userId));
 
-            var address = await _addressService.UpdateAddress(id, addressdto);
+            return Ok(addressId);
 
-            _response.Data = addressdto;
-            _response.StatusCode = HttpStatusCode.OK;
 
-            return Ok(_response);
         }
 
       
@@ -130,35 +110,13 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Authorize]
-        public async Task<ActionResult<APIResponse>> DeleteAddress(int id)
+        public async Task<IActionResult> DeleteAddress(int id)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (userId == null)
-            {
-                _response.StatusCode = HttpStatusCode.Unauthorized;
-                _response.Errors = new List<string> { "User not authorized" };
-                return Unauthorized(_response);
-            }
+            var addressId = await _mediator.Send(new DeleteAddressCommand(id));
 
-            var address = await _addressService.GetAddress(id, userId);
-            if (address == null)
-            {
-                _response.StatusCode = HttpStatusCode.NotFound;
-                _response.Errors = new List<string> { "Address Not Found" };
-                return NotFound(_response);
-            }
-
-            var result = await _addressService.DeleteAddress(id, userId);
-            if (!result)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.Errors = new List<string> { "Error deleting address" };
-                return BadRequest(_response);
-            }
-            _response.StatusCode = HttpStatusCode.NoContent;
-
-            return Ok(_response);
+            return NoContent();
         }
     }
 }

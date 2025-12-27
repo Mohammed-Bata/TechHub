@@ -6,17 +6,19 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using TechHub.Application.Common.Interfaces;
 using TechHub.Domain.Entities;
 
 namespace TechHub.Infrastructure
 {
-    public class AppDbContext : IdentityDbContext<ApplicationUser>
+    public class AppDbContext : IdentityDbContext<ApplicationUser>,IAppDbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
 
         public DbSet<Wishlist> Wishlists { get; set; }
+        public DbSet<Address> Addresses { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductWishlist> ProductWishlists { get; set; }
         public DbSet<ShoppingCart> Carts { get; set; }
@@ -33,6 +35,11 @@ namespace TechHub.Infrastructure
         {
             builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
             base.OnModelCreating(builder);
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            return await base.SaveChangesAsync(cancellationToken);
         }
     }
 }

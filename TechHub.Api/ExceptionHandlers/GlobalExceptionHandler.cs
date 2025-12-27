@@ -17,7 +17,7 @@ namespace TechHub.Api.ExceptionHandlers
 
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
-            _logger.LogError(exception, "Exception occurred: {Message}, Path: { Path}", exception.Message, httpContext.Request.Path);
+            _logger.LogError(exception, "Exception occurred: {Message}, Path: {Path}", exception.Message, httpContext.Request.Path);
 
             var (status, title) = exception switch
             {

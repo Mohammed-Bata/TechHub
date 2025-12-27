@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using TechHub.Application.Common.Interfaces;
 using TechHub.Application.Interfaces;
 using TechHub.Infrastructure.Repositories;
 using TechHub.Infrastructure.Services;
@@ -21,6 +22,11 @@ namespace TechHub.Infrastructure
             services.AddScoped<ICacheService, CacheService>();
             services.AddTransient<IEmailService, EmailService>();
 
+            // Map both interfaces to the same implementation
+            services.AddScoped<IAppDbContext>(sp =>
+                sp.GetRequiredService<AppDbContext>());
+
+          
             return services;
         }
 
@@ -31,6 +37,8 @@ namespace TechHub.Infrastructure
                 .EnableSensitiveDataLogging()
                  .LogTo(Console.WriteLine, LogLevel.Information)
                 );
+
+            services.AddSingleton<ISqlConnectionFactory, SqlConnectionFactory>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserRepository, UserRepository>();
