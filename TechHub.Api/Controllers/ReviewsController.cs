@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,11 @@ using System.Net;
 using System.Security.Claims;
 using TechHub.Application.DTOs;
 using TechHub.Application.Interfaces;
+using TechHub.Application.Reviews.Commands.CreateReview;
+using TechHub.Application.Reviews.Commands.DeleteReview;
+using TechHub.Application.Reviews.Commands.UpdateReview;
+using TechHub.Application.Reviews.Queries.GetReview;
+using TechHub.Application.Reviews.Queries.GetReviews;
 using TechHub.Application.Services;
 using TechHub.Domain;
 using TechHub.Infrastructure.Repositories;
@@ -18,56 +24,54 @@ namespace TechHub.Api.Controllers
     [ApiController]
     public class ReviewsController : ControllerBase
     {
-        private readonly ReviewService _reviewService;
-        private readonly APIResponse _response;
+       private readonly IMediator _mediator;
 
-        public ReviewsController(ReviewService reviewService)
+        public ReviewsController(IMediator mediator)
         {
-            _reviewService = reviewService;
-            _response = new APIResponse();
+            _mediator = mediator;
         }
 
-       
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<APIResponse>> GetReviews(Guid productId, int pageSize = 5, int pageNumber = 1)
+        public async Task<IActionResult> GetReviews(Guid productId)
         {
-            var reviews = await _reviewService.GetReviews(productId, pageSize, pageNumber);
+           var query = new GetReviewsQuery(productId);
 
-            _response.Data = reviews;
-            _response.StatusCode = HttpStatusCode.OK;
+             var reviews = await _mediator.Send(query);
 
-            return Ok(_response);
+            return Ok(reviews);
         }
-        
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetReview(Guid id)
+        {
+            var query = new GetReviewQuery(id);
+            var review = await _mediator.Send(query);
+           
+            return Ok(review);
+        }
+
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Authorize]
-        public async Task<ActionResult<APIResponse>> PostReview(Guid productId, [FromBody] ReviewDto reviewDto, IValidator<ReviewDto> validator)
+        public async Task<IActionResult> PostReview(Guid productId, [FromBody] ReviewDto reviewDto)
         {
-            var validationResult = await validator.ValidateAsync(reviewDto);
-            if (!validationResult.IsValid)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return BadRequest(_response);
-            }
-
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var existReview = await _reviewService.PostReview(productId, reviewDto, userId);
+            var command = new CreateReviewCommand
+            (
+               productId,
+               userId,
+               reviewDto.Content,
+                reviewDto.Rating
+            );
+            var reviewId = await _mediator.Send(command);
+            return CreatedAtAction(nameof(GetReview), new { id = reviewId }, null);
 
-            if (existReview == null)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.Errors = new List<string> { "User already reviewed this product." };
-                return BadRequest(_response);
-            }
-
-            _response.StatusCode = HttpStatusCode.Created;
-            _response.Data = existReview;
-            return Ok(_response);
         }
 
         [HttpPut("{id}")]
@@ -76,50 +80,19 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize]
-        public async Task<ActionResult<APIResponse>> PutReview(Guid id, [FromBody] ReviewDto reviewDto, IValidator<ReviewDto> validator)
+        public async Task<IActionResult> PutReview(Guid id, [FromBody] ReviewDto reviewDto)
         {
-            var validationResult = await validator.ValidateAsync(reviewDto);
-            if (!validationResult.IsValid)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+            var command = new UpdateReviewCommand
+            (
+               id,
+               reviewDto.Content,
+               reviewDto.Rating
+            );
 
-                return BadRequest(_response);
-            }
-            var review = await _reviewService.GetReview(id);
+            var reviewId = await _mediator.Send(command);
 
-            if (review is null)
-            {
-                _response.StatusCode = HttpStatusCode.NotFound;
-                _response.Errors = new List<string> { "Review not found." };
+            return Ok(reviewId);
 
-                return NotFound(_response);
-            }
-
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (review.UserId != userId)
-            {
-                _response.StatusCode = HttpStatusCode.Forbidden;
-                _response.Errors = new List<string> { "User is not authorized to update this review." };
-
-                return BadRequest(_response);
-            }
-            review.Content = reviewDto.Content;
-            review.Rating = reviewDto.Rating;
-            var result = await _reviewService.PutReview(id, reviewDto);
-
-            if (!result)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.Errors = new List<string> { "Failed to update review." };
-
-                return BadRequest(_response);
-            }
-
-            _response.StatusCode = HttpStatusCode.OK;
-
-            return Ok(_response);
         }
 
        
@@ -128,34 +101,11 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize]
-        public async Task<ActionResult<APIResponse>> DeleteReview(Guid id)
+        public async Task<IActionResult> DeleteReview(Guid id)
         {
-            var review = await _reviewService.GetReview(id);
-            if (review == null)
-            {
-                _response.StatusCode = HttpStatusCode.NotFound;
-                _response.Errors = new List<string> { "Review not found." };
-                return NotFound(_response);
-            }
-
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (review.UserId != userId)
-            {
-                _response.StatusCode = HttpStatusCode.Forbidden;
-                _response.Errors = new List<string> { "User is not authorized to delete this review." };
-                return BadRequest(_response);
-            }
-
-            var result = await _reviewService.DeleteReview(id);
-            if (!result)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.Errors = new List<string> { "Failed to delete review." };
-                return BadRequest(_response);
-            }
-
-            _response.StatusCode = HttpStatusCode.OK;
-            return Ok(_response);
+           var command = new DeleteReviewCommand(id);
+            var reviewId = await _mediator.Send(command);
+            return Ok(reviewId);
         }
     }
 }

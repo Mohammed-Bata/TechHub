@@ -15,6 +15,7 @@ namespace TechHub.Application.Common.Interfaces
         public DbSet<ShoppingCart> Carts {get;}
         public DbSet<Order> Orders {get;}
         public DbSet<Category> Categories {get;}
+        public DbSet<Review> Reviews {get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

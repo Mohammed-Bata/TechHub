@@ -23,8 +23,6 @@ namespace TechHub.Api.Controllers
     [ApiController]
     public class AddressesController : ControllerBase
     {
-       
-
         private readonly IMediator _mediator;
 
         public AddressesController(IMediator mediator)
@@ -35,7 +33,7 @@ namespace TechHub.Api.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> GetAddresses()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 
 namespace TechHub.Application.DTOs
 {
-    public record ReviewDto(string Content,int Rating);
+    public record ReviewDto(string Content,int Rating,string ReviewerName);
     
 }
