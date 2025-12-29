@@ -1,10 +1,10 @@
 ﻿
 namespace TechHub.Application.DTOs
 {
-    public class LoginRequest
-    {
-        public string Email { get; set; }
+    public record LoginRequest
+   (
+       string Email,
 
-        public string Password { get; set; }
-    }
+       string Password
+    );
 }
