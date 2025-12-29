@@ -16,6 +16,7 @@ namespace TechHub.Application.Common.Interfaces
         public DbSet<Order> Orders {get;}
         public DbSet<Category> Categories {get;}
         public DbSet<Review> Reviews {get; }
+        public DbSet<Wishlist> Wishlists {get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

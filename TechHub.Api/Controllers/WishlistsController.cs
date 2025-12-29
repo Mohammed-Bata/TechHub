@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Security.Claims;
 using TechHub.Application.DTOs;
 using TechHub.Application.Interfaces;
+using TechHub.Application.Wishlists.Commands.AddToWishlist;
+using TechHub.Application.Wishlists.Commands.RemoveFromWishlist;
+using TechHub.Application.Wishlists.Queries.GetWishlist;
 using TechHub.Domain.Entities;
 using TechHub.Infrastructure.Repositories;
 using TechHub.Infrastructure.Services;
@@ -15,47 +19,27 @@ namespace TechHub.Api.Controllers
     [ApiController]
     public class WishlistsController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly APIResponse _response;
-        private readonly ICacheService _cache;
+       private readonly IMediator _mediator;
 
-        public WishlistsController(IUnitOfWork unitOfWork, ICacheService cache)
+        public WishlistsController(IMediator mediator)
         {
-            _unitOfWork = unitOfWork;
-            _cache = cache;
-            _response = new APIResponse();
+            _mediator = mediator;
         }
 
-        
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize]
-        public async Task<ActionResult<APIResponse>> GetWishlist()
+        public async Task<ActionResult<WishlistDto>> GetWishlist()
         {
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (userId == null)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Errors = new List<string> { "User ID not found" };
-                    return BadRequest(_response);
-                }
-            string cacheKey = $"Wishlist_{userId}";
-            var cachedWishlist = await _cache.GetAsync<Wishlist>(cacheKey);
-            if (cachedWishlist != null)
-            {
-                _response.StatusCode = HttpStatusCode.OK;
-                _response.Data = cachedWishlist;
-                return Ok(_response);
-            }
-         
-           var wishlist = await _unitOfWork.Wishlists.GetWishlistByUserId(userId);
-               
-                _response.StatusCode = HttpStatusCode.OK;
-                _response.Data = wishlist;
-               
-                await _cache.SetAsync(cacheKey, wishlist);
-                return Ok(_response);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var query = new GetWishlistQuery(userId);
+            var wishlist = await _mediator.Send(query);
+
+            return Ok(wishlist);
+
         }
 
        
@@ -63,58 +47,32 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize]
-        public async Task<ActionResult<APIResponse>> AddToWishlist(Guid productId)
+        public async Task<ActionResult<Guid>> AddToWishlist(Guid productId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (userId == null)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.Errors = new List<string> { "User ID not found" };
+            var command = new AddToWishlistCommand(userId, productId);
 
-                return BadRequest(_response);
-            }
+            var result = await _mediator.Send(command);
 
-            bool Added = await _unitOfWork.Wishlists.AddProductToWishlist(productId, userId);
+            return result;
 
-            await _unitOfWork.SaveChangesAsync();
 
-            _response.Data = Added;
-            _response.StatusCode = HttpStatusCode.OK;
-
-            string cacheKey = $"Wishlist_{userId}";
-
-           await _cache.RemoveAsync(cacheKey);
-
-                return Ok(_response);
         }
 
        
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> RemoveWishlistProduct(Guid productId)
+        public async Task<ActionResult<Guid>> RemoveWishlistProduct(Guid productId)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (userId == null)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Errors = new List<string> { "User ID not found" };
-                    return BadRequest(_response);
-                }
+            var command = new RemoveFromWishlistCommand(userId, productId);
 
-                bool Removed = await _unitOfWork.Wishlists.RemoveFromWishlist(productId, userId);
-                await _unitOfWork.SaveChangesAsync();
+            var wishlistId = await _mediator.Send(command);
 
-                _response.Data = Removed;
-                _response.StatusCode = HttpStatusCode.OK;
-            string cacheKey = $"Wishlist_{userId}";
-
-            await _cache.RemoveAsync(cacheKey);
-
-            return Ok(_response);
-           
+            return wishlistId;
         }
     }
 }
