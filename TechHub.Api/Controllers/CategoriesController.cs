@@ -17,7 +17,6 @@ namespace TechHub.Api.Controllers
     public class CategoriesController : ControllerBase
     {
       
-
         private readonly IMediator _mediator;
 
         public CategoriesController(IMediator mediator)

@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Security.Claims;
+using TechHub.Application.Carts.Commands.AddToCart;
+using TechHub.Application.Carts.Commands.RemoveFromCart;
+using TechHub.Application.Carts.Queries.GetCart;
 using TechHub.Application.DTOs;
 using TechHub.Application.Interfaces;
 using TechHub.Domain.Entities;
@@ -15,42 +19,27 @@ namespace TechHub.Api.Controllers
     [ApiController]
     public class ShoppingCartsController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly APIResponse _response;
-        private readonly ICacheService _cache;
+       private readonly IMediator _mediator;
 
-        public ShoppingCartsController(IUnitOfWork unitOfWork, ICacheService cache)
+        public ShoppingCartsController(IMediator mediator)
         {
-            _unitOfWork = unitOfWork;
-            _cache = cache;
-            _response = new APIResponse();
+                _mediator = mediator;
         }
 
-       
+
         [HttpPost("AddItem")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> AddItemAsync([FromQuery] Guid productId,
+        public async Task<ActionResult<Guid>> AddItemAsync([FromQuery] Guid productId,
             [FromQuery] int quantity)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var item = await _unitOfWork.Carts.AddItemAsync(userId, productId, quantity);
+           
+            var command = new AddToCartCommand(userId, productId, quantity);
 
-            if (item != null)
-            {
-                await _unitOfWork.SaveChangesAsync();
-
-                _response.StatusCode = HttpStatusCode.OK;
-                _response.Data = item;
-
-                await _cache.RemoveAsync($"Cart_{userId}");
-                return Ok(_response);
-            }
-            _response.StatusCode = HttpStatusCode.BadRequest;
-            _response.Errors = new List<string> { "Item not added to cart." };
-
-            return BadRequest(_response);
+            var cartItemId = await _mediator.Send(command);
+            return Ok(cartItemId);
         }
 
 
@@ -59,52 +48,33 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> RemoveItemAsync(Guid itemId)
+        public async Task<ActionResult<Guid>> RemoveItemAsync(Guid itemId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var result = await _unitOfWork.Carts.RemoveItemAsync(userId, itemId);
+            
+            var command = new RemoveFromCartCommand(userId, itemId);
 
-            if (result)
-            {
-                await _unitOfWork.SaveChangesAsync();
+            await _mediator.Send(command);
 
-                _response.StatusCode = HttpStatusCode.OK;
-                _response.Data = result;
+            return NoContent();
 
-                await _cache.RemoveAsync($"Cart_{userId}");
 
-                return Ok(_response);
-            }
-            _response.StatusCode = HttpStatusCode.BadRequest;
-            _response.Errors = new List<string> { "Item not removed from cart." };
-
-            return BadRequest(_response);
         }
 
         [HttpGet]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> GetCartWithItemsAsync()
+        public async Task<ActionResult<ShoppingCartDto>> GetCartWithItemsAsync()
         {
            
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            string cacheKey = $"Cart_{userId}";
-            var cachedCart = await _cache.GetAsync<ShoppingCart>(cacheKey);
-            if (cachedCart != null)
-            {
-                _response.StatusCode = HttpStatusCode.OK;
-                _response.Data = cachedCart;
-                return Ok(_response);
-            }
+            var query = new GetCartQuery(userId);
 
-            var cart = await _unitOfWork.Carts.GetCartWithItemsAsync(userId);
+            var cart = await _mediator.Send(query);
 
-            _response.StatusCode = HttpStatusCode.OK;
-            _response.Data = cart;
-            await _cache.SetAsync(cacheKey, cart);
-            return Ok(_response);
+            return cart;
         }
     }
 }
