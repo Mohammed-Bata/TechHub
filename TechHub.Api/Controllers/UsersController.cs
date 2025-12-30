@@ -19,12 +19,10 @@ namespace TechHub.Api.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IAuthService _authService;
         private readonly ITokenService _tokenService;
-        public UsersController(IMediator mediator, IAuthService authService, ITokenService tokenService)
+        public UsersController(IMediator mediator, ITokenService tokenService)
         {
             _mediator = mediator;
-            _authService = authService;
             _tokenService = tokenService;
         }
 
@@ -95,7 +93,7 @@ namespace TechHub.Api.Controllers
 
         //        return BadRequest(_response);
         //    }
-        //}
+        //}q
         
         //[HttpPost("Logout")]
         //[ProducesResponseType(StatusCodes.Status200OK)]

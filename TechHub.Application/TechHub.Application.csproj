@@ -13,11 +13,18 @@
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.12" />
     <PackageReference Include="Stripe.net" Version="48.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\TechHub.Domain\TechHub.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Orders\Commands\CreateOrder\" />
+    <Folder Include="Orders\Queries\GetOrders\" />
+    <Folder Include="Orders\Queries\GetOrder\" />
   </ItemGroup>
 
 </Project>

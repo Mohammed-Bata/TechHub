@@ -13,7 +13,6 @@ namespace TechHub.Application.DTOs
          string? Brand,
          decimal? MinPrice,
          decimal? MaxPrice,
-         int? ReviewCount,
          decimal? MinAverageRating
         );
     
