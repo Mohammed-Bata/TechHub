@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,9 @@ using System.Net;
 using System.Security.Claims;
 using TechHub.Application.DTOs;
 using TechHub.Application.Interfaces;
+using TechHub.Application.Orders.Commands.CreateOrder;
+using TechHub.Application.Orders.Queries.GetOrder;
+using TechHub.Application.Orders.Queries.GetOrders;
 using TechHub.Application.Services;
 using TechHub.Infrastructure.Repositories;
 using TechHub.Infrastructure.Services;
@@ -20,20 +24,13 @@ namespace TechHub.Api.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        private readonly OrderService _orderService;
-        private readonly APIResponse _response;
-        private readonly AddressService _addressService;
-        private readonly IUnitOfWork _unitOfWork;
+       private readonly IMediator _mediator;
         private readonly IPaymentService _paymentService;
         
 
-        public OrdersController(IPaymentService paymentService,OrderService orderService,
-            IUnitOfWork unitOfWork,AddressService addressService)
+        public OrdersController(IPaymentService paymentService,IMediator mediator)
         {
-            _orderService = orderService;
-            _addressService = addressService;
-            _response = new APIResponse();
-            _unitOfWork = unitOfWork;
+           _mediator = mediator;
             _paymentService = paymentService;
         }
 
@@ -43,52 +40,30 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<APIResponse>> GetOrder(Guid id)
+        public async Task<ActionResult<OrderResponseDto>> GetOrder(Guid id)
         {
 
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (userId == null)
-            {
-                _response.StatusCode = HttpStatusCode.Unauthorized;
-                _response.Errors = new List<string> { "User not authorized" };
-                return Unauthorized(_response);
-            }
+            var query = new GetOrderQuery(id, userId);
 
-            var order = await _orderService.GetOrder(id, userId);
-            if (order == null)
-            {
-                _response.StatusCode = HttpStatusCode.NotFound;
-                _response.Errors = new List<string> { new string("Order not found.") };
+            var order =  await _mediator.Send(query);
 
-                return NotFound(_response);
-            }
-            _response.Data = order;
-            _response.StatusCode = HttpStatusCode.OK;
-
-            return Ok(_response);
+            return order;
         }
         
         [HttpGet]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<APIResponse>> GetOrders()
+        public async Task<ActionResult<List<OrderResponseDto>>> GetOrders()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null)
-            {
-                _response.StatusCode = HttpStatusCode.Unauthorized;
-                _response.Errors = new List<string> { "User not authorized" };
 
-                return Unauthorized(_response);
-            }
-            var orders = await _orderService.GetOrders(userId);
+            var query = new GetOrdersQuery(userId);
 
-            _response.Data = orders;
-            _response.StatusCode = HttpStatusCode.OK;
-
-            return Ok(_response);
+            var orders = await _mediator.Send(query);
+            return orders;
         }
        
         [HttpPost]
@@ -96,45 +71,17 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<APIResponse>> CreateOrder(OrderDto orderDto,
-            IValidator<OrderDto> validator)
+        public async Task<ActionResult<Guid>> CreateOrder(OrderDto orderDto)
         {
-            var validationResult = await validator.ValidateAsync(orderDto);
-
-            if (!validationResult.IsValid)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return BadRequest(_response);
-            }
-
+           
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null)
-            {
-                _response.StatusCode = HttpStatusCode.Unauthorized;
-                _response.Errors = new List<string> { "User not authorized" };
-                return Unauthorized(_response);
-            }
+           
+            var command = new CreateOrderCommand(userId,orderDto.AddressId);
 
-            var address = await _addressService.GetAddress(orderDto.AddressId, userId);
-            if (address == null)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.Errors = new List<string> { "Address not found." };
-                return BadRequest(_response);
-            }
-            var order = await _orderService.CreateOrder(orderDto, userId);
-            if (order.StatusCode == HttpStatusCode.BadRequest)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.Errors = new List<string> { "Order creation failed." };
-                return BadRequest(_response);
-            }
+            var orderId = await _mediator.Send(command);
 
-            _response.Data = order.Data;
-            _response.StatusCode = HttpStatusCode.Created;
-
-            return Ok(_response);
+            return orderId;
+            
         }
     }
 }

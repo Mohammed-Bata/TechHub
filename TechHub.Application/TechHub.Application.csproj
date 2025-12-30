@@ -22,9 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Orders\Commands\CreateOrder\" />
-    <Folder Include="Orders\Queries\GetOrders\" />
-    <Folder Include="Orders\Queries\GetOrder\" />
+    <Folder Include="ProductImages\Commands\DeleteProductImage\" />
   </ItemGroup>
 
 </Project>

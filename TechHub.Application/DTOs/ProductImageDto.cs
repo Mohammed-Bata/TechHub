@@ -10,8 +10,15 @@ namespace TechHub.Application.DTOs
 {
     public class ProductImageDto
     {    
-        public int ProductId { get; set; }
+        public Guid ProductId { get; set; }
         public string? ImageUrl { get; set; }
         public IFormFile Image { get; set; }
+    }
+
+    public record ProductImageResponseDto
+    {
+        public Guid ProductId { get; set; }
+        public string ImageUrl { get; set; }
+        public string ImageLocalPath { get; set; }
     }
 }

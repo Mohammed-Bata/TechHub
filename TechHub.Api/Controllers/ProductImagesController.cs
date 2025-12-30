@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using TechHub.Application.DTOs;
 using TechHub.Application.Interfaces;
+using TechHub.Application.ProductImages.Queries.GetProductImage;
+using TechHub.Application.ProductImages.Queries.GetProductImages;
 using TechHub.Domain.Entities;
 using TechHub.Infrastructure.Repositories;
 using TechHub.Infrastructure.Services;
@@ -14,50 +17,23 @@ namespace TechHub.Api.Controllers
     [ApiController]
     public class ProductImagesController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly APIResponse _response;
-        private readonly ICacheService _cache;
-
-        public ProductImagesController(IUnitOfWork unitOfWork, ICacheService cache)
+       private readonly IMediator _mediator;
+        public ProductImagesController(IMediator mediator)
         {
-            _unitOfWork = unitOfWork;
-            _cache = cache;
-            _response = new APIResponse();
+            _mediator = mediator;
         }
 
-       
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize]
-        public async Task<ActionResult<APIResponse>> GetProductImages(Guid productId)
+        public async Task<ActionResult<List<ProductImageResponseDto>>> GetProductImages(Guid productId)
         {
-            string cacheKey = $"productImages_{productId}";
-            var cachedImages = await _cache.GetAsync<List<ProductImage>>(cacheKey);
-            if (cachedImages != null)
-            {
-                _response.Data = cachedImages;
-                _response.StatusCode = HttpStatusCode.OK;
+            var query = new GetProductImagesQuery(productId);
 
-                return Ok(_response);
-            }
-
-            var images = await _unitOfWork.ProductImages.GetAll(i => i.ProductId == productId);
-
-            if (images == null || !images.Any())
-            {
-                _response.Errors = new List<string> { "No images found for this product." };
-                _response.StatusCode = HttpStatusCode.NotFound;
-
-                return NotFound(_response);
-            }
-            _response.Data = images;
-            _response.StatusCode = HttpStatusCode.OK;
-
-            await _cache.SetAsync(cacheKey, images);
-
-            return Ok(_response);
+            var images = await _mediator.Send(query);
+            return images;
         }
 
         
@@ -66,21 +42,13 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize]
-        public async Task<ActionResult<APIResponse>> GetProductImage(int id)
+        public async Task<ActionResult<ProductImageResponseDto>> GetProductImage(int id)
         {
-            var image = await _unitOfWork.ProductImages.GetAsync(i => i.ImageId == id);
+            var query = new GetProductImageQuery(id);
 
-            if (image == null)
-            {
-                _response.Errors = new List<string> { "Image not found" };
-                _response.StatusCode = HttpStatusCode.NotFound;
+            var image = await _mediator.Send(query);
 
-                return NotFound(_response);
-            }
-            _response.Data = image;
-            _response.StatusCode = HttpStatusCode.OK;
-
-            return Ok(_response);
+            return image;
         }
 
         

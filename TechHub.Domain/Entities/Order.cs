@@ -10,10 +10,8 @@ namespace TechHub.Domain.Entities
 {
     public class Order
     {
-       
         public Guid Id { get; set; }
-        public int? AddressId { get; set; }
-        
+        public int? AddressId { get; set; }   
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;
         public decimal TotalAmount { get; set; }
         public string? PaymentIntentId { get; set; }
