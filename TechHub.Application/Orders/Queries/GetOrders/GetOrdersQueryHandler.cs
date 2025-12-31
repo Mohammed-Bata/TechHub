@@ -22,7 +22,7 @@ namespace TechHub.Application.Orders.Queries.GetOrders
             using var connection = _sqlConnectionFactory.CreateConnection();
             var sql = @"
                 SELECT o.Id, o.AddressId,a.Street,a.City, o.OrderDate, o.TotalAmount, o.PaymentIntentId,
-                       oi.Id AS OrderItemId, oi.ProductId, oi.Quantity, oi.UnitPrice, p.Name AS ProductName
+                       oi.Id AS ItemId, oi.ProductId, oi.Quantity, oi.UnitPrice,(oi.Quantity * oi.UnitPrice) AS TotalPrice, p.Name AS ProductName
                 FROM Orders o
                 LEFT JOIN Addresses a ON o.AddressId = a.Id
                 LEFT JOIN OrderItems oi ON o.Id = oi.OrderId
@@ -45,7 +45,7 @@ namespace TechHub.Application.Orders.Queries.GetOrders
                     return orderEntry;
                 },
                 new { UserId = request.UserId },
-                splitOn: "OrderItemId"
+                splitOn: "ItemId"
             );
             return orderDictionary.Values.ToList();
         }

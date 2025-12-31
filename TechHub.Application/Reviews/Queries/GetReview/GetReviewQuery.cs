@@ -8,6 +8,6 @@ using TechHub.Application.DTOs;
 
 namespace TechHub.Application.Reviews.Queries.GetReview
 {
-    public record GetReviewQuery(Guid ReviewId): IRequest<ReviewDto>;
+    public record GetReviewQuery(Guid ReviewId): IRequest<ReviewResponseDto>;
 
 }

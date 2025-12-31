@@ -24,22 +24,23 @@ namespace TechHub.Application.Wishlists.Queries.GetWishlist
         {
             using var connection = _sqlConnectionFactory.CreateConnection();
             var sql = @"
-                SELECT w.Id AS WishlistId,
+                SELECT w.Id,
                         w.Name AS WishlistName, 
                        w.CreatedAt AS WishlistCreatedAt,
                         p.Id AS ProductId,
-                       p.Name AS ProductName, 
-                       p.Description AS ProductDescription, 
-                       p.Price AS ProductPrice,
-                       p.TotalPrice AS ProductTotalPrice,
-                       p.StockAmount AS ProductStock,
+                       p.Name,
+                       p.Description, 
+                       p.Price,
+                       p.StockAmount,
+                        p.Brand,
+                        c.Id AS CategoryId,
                        c.Name AS CategoryName,
-                       p.ImageLocalPath AS ProductImageLocalPath,
-                       p.ImageUrl AS ProductImageUrl,
-                       p.ProductCode AS ProductCode,
-                       p.AverageRating AS ProductAverageRating,
+                       p.ImageLocalPath,
+                       p.ImageUrl,
+                       p.ProductCode,
+                       p.AverageRating
                 FROM Wishlists w
-                LEFT JOIN WishlistProducts wp ON w.Id = wp.WishlistId
+                LEFT JOIN ProductWishlists wp ON w.Id = wp.WishlistId
                 LEFT JOIN Products p ON wp.ProductId = p.Id
                 LEFT JOIN Categories c ON p.CategoryId = c.Id
                 WHERE w.UserId = @UserId;
@@ -55,6 +56,7 @@ namespace TechHub.Application.Wishlists.Queries.GetWishlist
                     {
                         wishlistEntry = new WishlistDto
                         {
+                            Id = wishlist.Id,
                             Name = wishlist.Name,
                             Products = new List<ProductWishlistDto>()
                         };

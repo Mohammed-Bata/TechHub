@@ -22,7 +22,7 @@ namespace TechHub.Application.Products.Queries.SearchProducts
         public async Task<List<ProductResponseDto>> Handle(SearchProductsQuery request, CancellationToken cancellationToken)
         {
             var connection = _sqlConnectionFactory.CreateConnection();
-            var query = @"SELECT p.Id, p.Name, p.Description, p.Brand, p.Price, p.StockAmount , p.ProductCode, p.AverageRating, c.Id AS CategoryId, c.Name AS CategoryName, p.CoverImageUrl,
+            var query = @"SELECT p.Id, p.Name, p.Description, p.Brand, p.Price, p.StockAmount , p.ProductCode, p.AverageRating, c.Id AS CategoryId, c.Name AS CategoryName, p.ImageUrl,
                            (SELECT STRING_AGG(ImageUrl, ',') 
                      FROM ProductImages 
                      WHERE ProductId = p.Id) AS ImageUrlsString

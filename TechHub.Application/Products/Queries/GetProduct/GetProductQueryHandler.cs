@@ -24,7 +24,7 @@ namespace TechHub.Application.Products.Queries.GetProduct
             var query = @"
                 SELECT 
                     p.Id, p.Name, p.Description, p.Price, p.StockAmount, p.Brand, p.CategoryId, c.Name AS CategoryName,
-                    p.CoverImageUrl,
+                    p.ImageUrl,
                     p.ProductCode,
                     p.AverageRating,
                    (SELECT STRING_AGG(ImageUrl, ',') 

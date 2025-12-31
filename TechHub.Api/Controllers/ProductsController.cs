@@ -1,17 +1,14 @@
-﻿using FluentValidation;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Net;
 using TechHub.Application.DTOs;
 using TechHub.Application.Products.Commands.CreateProduct;
 using TechHub.Application.Products.Commands.DeleteProduct;
 using TechHub.Application.Products.Commands.UpdateProduct;
 using TechHub.Application.Products.Queries.GetProduct;
 using TechHub.Application.Products.Queries.SearchProducts;
-using TechHub.Domain.Entities;
+
+
 namespace TechHub.Api.Controllers
 {
     [Route("api/[controller]")]
@@ -26,7 +23,7 @@ namespace TechHub.Api.Controllers
         }
 
         [HttpGet("search")]        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<ProductResponseDto>>> SearchProducts([FromQuery] ProductQueryParameters queryParameters)
+        public async Task<ActionResult<IEnumerable<ProductResponseDto>>> SearchProducts([FromQuery] ProductQueryParameters queryParameters)
         {
             var query = new SearchProductsQuery(queryParameters);
 
@@ -62,7 +59,7 @@ namespace TechHub.Api.Controllers
             var command = new CreateProductCommand(productDto, baseUrl);
 
             var productId = await _mediator.Send(command);
-            return productId;
+            return CreatedAtAction(nameof(GetProduct),productId);
         }
 
        
@@ -86,9 +83,8 @@ namespace TechHub.Api.Controllers
 
         [HttpDelete("{id}")]
         [Authorize]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> DeleteProduct(Guid id)
         {
             var command = new DeleteProductCommand(id);

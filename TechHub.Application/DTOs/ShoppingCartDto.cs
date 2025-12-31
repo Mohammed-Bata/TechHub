@@ -9,8 +9,7 @@ namespace TechHub.Application.DTOs
     public class ShoppingCartDto
     {
         public Guid Id { get; set; }
-        public decimal Price { get; set; }
+        public decimal Price => Items.Sum(i => i.TotalPrice);
         public List<ShoppingCartItemDto> Items { get; set; } = new List<ShoppingCartItemDto>();
-        public string UserId { get; set; }
     }
 }

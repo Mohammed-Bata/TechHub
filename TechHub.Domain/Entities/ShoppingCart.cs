@@ -12,7 +12,6 @@ namespace TechHub.Domain.Entities
 {
     public class ShoppingCart
     {
-  
         public Guid Id { get; set; }
         public decimal Price
         {

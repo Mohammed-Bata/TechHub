@@ -21,7 +21,7 @@ namespace TechHub.Application.Carts.Commands.RemoveFromCart
 
         public async Task Handle(RemoveFromCartCommand request, CancellationToken cancellationToken)
         {
-            var cart = await _context.Carts
+            var cart = await _context.Carts.Include(c=>c.Items)
                 .Where(c => c.UserId == request.UserId)
                 .FirstOrDefaultAsync(cancellationToken);
             if (cart == null)

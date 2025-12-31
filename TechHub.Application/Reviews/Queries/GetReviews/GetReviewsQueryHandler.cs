@@ -23,7 +23,7 @@ namespace TechHub.Application.Reviews.Queries.GetReviews
         {
             const string sql = @"SELECT r.Content, r.Rating, u.UserName AS ReviewerName
                                  FROM Reviews r
-                                 JOIN Users u ON r.UserId = u.Id
+                                 JOIN AspNetUsers u ON r.UserId = u.Id
                                  WHERE r.ProductId = @ProductId
                                  ORDER BY r.CreatedAt DESC";
             using var connection = _sqlConnectionFactory.CreateConnection();

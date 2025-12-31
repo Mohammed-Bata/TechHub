@@ -23,11 +23,12 @@ namespace TechHub.Application.Carts.Queries.GetCart
         {
             using var connection = _sqlConnectionFactory.CreateConnection();
             var sql = @"
-                SELECT c.Id, c.Price,
-                       ci.Id AS ItemId, ci.Quantity,ci.TotalPrice,
-                       p.Id AS ProductId, p.Name AS ProductName, p.Price AS ProductPrice
+                SELECT c.Id, 
+                       ci.Id AS ItemId, ci.Quantity,
+                       p.Id AS ProductId, p.Name AS ProductName, p.Price,
+                        (ci.Price * ci.Quantity) as TotalPrice
                 FROM Carts c
-                LEFT JOIN CartItems ci ON c.Id = ci.CartId
+                LEFT JOIN CartItems ci ON c.Id = ci.ShoppingCartId
                 LEFT JOIN Products p ON ci.ProductId = p.Id
                 WHERE c.UserId = @UserId";
             var cartDictionary = new Dictionary<Guid, ShoppingCartDto>();

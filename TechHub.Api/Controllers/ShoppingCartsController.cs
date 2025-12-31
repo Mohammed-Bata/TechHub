@@ -1,17 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using System.Security.Claims;
 using TechHub.Application.Carts.Commands.AddToCart;
 using TechHub.Application.Carts.Commands.RemoveFromCart;
 using TechHub.Application.Carts.Queries.GetCart;
 using TechHub.Application.DTOs;
-using TechHub.Application.Interfaces;
-using TechHub.Domain.Entities;
-using TechHub.Infrastructure.Repositories;
-using TechHub.Infrastructure.Services;
+
 
 namespace TechHub.Api.Controllers
 {
@@ -31,6 +26,7 @@ namespace TechHub.Api.Controllers
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]        
         public async Task<ActionResult<Guid>> AddItemAsync([FromQuery] Guid productId,
             [FromQuery] int quantity)
         {
@@ -45,10 +41,9 @@ namespace TechHub.Api.Controllers
 
         [HttpDelete("RemoveItem/{itemId}")]
         [Authorize]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Guid>> RemoveItemAsync(Guid itemId)
+        public async Task<ActionResult> RemoveItemAsync(Guid itemId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             
@@ -57,14 +52,11 @@ namespace TechHub.Api.Controllers
             await _mediator.Send(command);
 
             return NoContent();
-
-
         }
 
         [HttpGet]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ShoppingCartDto>> GetCartWithItemsAsync()
         {
            

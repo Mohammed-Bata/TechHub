@@ -1,22 +1,13 @@
-﻿using FluentValidation;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Net;
 using System.Security.Claims;
 using TechHub.Application.DTOs;
-using TechHub.Application.Interfaces;
 using TechHub.Application.Reviews.Commands.CreateReview;
 using TechHub.Application.Reviews.Commands.DeleteReview;
 using TechHub.Application.Reviews.Commands.UpdateReview;
 using TechHub.Application.Reviews.Queries.GetReview;
 using TechHub.Application.Reviews.Queries.GetReviews;
-using TechHub.Application.Services;
-using TechHub.Domain;
-using TechHub.Infrastructure.Repositories;
-using TechHub.Infrastructure.Services;
 
 namespace TechHub.Api.Controllers
 {
@@ -34,7 +25,7 @@ namespace TechHub.Api.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetReviews(Guid productId)
+        public async Task<ActionResult<IEnumerable<ReviewDto>>> GetReviews(Guid productId)
         {
            var query = new GetReviewsQuery(productId);
 
@@ -46,19 +37,20 @@ namespace TechHub.Api.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetReview(Guid id)
+        public async Task<ActionResult<ReviewResponseDto>> GetReview(Guid id)
         {
             var query = new GetReviewQuery(id);
             var review = await _mediator.Send(query);
            
-            return Ok(review);
+            return review;
         }
 
         [HttpPost]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [Authorize]
+
         public async Task<IActionResult> PostReview(Guid productId, [FromBody] ReviewDto reviewDto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -70,17 +62,17 @@ namespace TechHub.Api.Controllers
                 reviewDto.Rating
             );
             var reviewId = await _mediator.Send(command);
-            return CreatedAtAction(nameof(GetReview), new { id = reviewId }, null);
+            return CreatedAtAction(nameof(GetReview), new { id = reviewId });
 
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Authorize]
-        public async Task<IActionResult> PutReview(Guid id, [FromBody] ReviewDto reviewDto)
+        public async Task<ActionResult<Guid>> PutReview(Guid id, [FromBody] ReviewResponseDto reviewDto)
         {
             var command = new UpdateReviewCommand
             (
@@ -97,15 +89,14 @@ namespace TechHub.Api.Controllers
 
        
         [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteReview(Guid id)
         {
            var command = new DeleteReviewCommand(id);
-            var reviewId = await _mediator.Send(command);
-            return Ok(reviewId);
+            await _mediator.Send(command);
+            return NoContent();
         }
     }
 }

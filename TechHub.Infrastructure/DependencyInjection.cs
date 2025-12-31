@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TechHub.Application.Common.Interfaces;
 using TechHub.Application.Interfaces;
-using TechHub.Infrastructure.Repositories;
 using TechHub.Infrastructure.Services;
 
 namespace TechHub.Infrastructure
@@ -39,14 +38,6 @@ namespace TechHub.Infrastructure
                 );
 
             services.AddSingleton<ISqlConnectionFactory, SqlConnectionFactory>();
-
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddScoped<ICartRepository, CartRepository>();
-            services.AddScoped<IReviewRepository, ReviewRepository>();
-            services.AddScoped<IWishlistRepository, WishlistRepository>();
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<DbInitializer>();
 
         }

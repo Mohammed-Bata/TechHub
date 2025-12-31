@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace TechHub.Application.Wishlists.Commands.RemoveFromWishlist
 
         public async Task<Guid> Handle(RemoveFromWishlistCommand request, CancellationToken cancellationToken)
         {
-            var wishlist = _context.Wishlists.FirstOrDefault(w => w.UserId == request.UserId);
+            var wishlist =  _context.Wishlists.Include(w=>w.Products).FirstOrDefault(w => w.UserId == request.UserId);
             if (wishlist != null)
             {
                 var productWishlist = wishlist.Products.FirstOrDefault(wp => wp.ProductId == request.ProductId);

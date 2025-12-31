@@ -10,20 +10,20 @@ using TechHub.Application.DTOs;
 
 namespace TechHub.Application.Reviews.Queries.GetReview
 {
-    public class GetReviewQueryHandler: IRequestHandler<GetReviewQuery, ReviewDto>
+    public class GetReviewQueryHandler: IRequestHandler<GetReviewQuery, ReviewResponseDto>
     {
         private readonly ISqlConnectionFactory _sqlConnectionFactory;
         public GetReviewQueryHandler(ISqlConnectionFactory sqlConnectionFactory)
         {
             _sqlConnectionFactory = sqlConnectionFactory;
         }
-        public async Task<ReviewDto> Handle(GetReviewQuery request, CancellationToken cancellationToken)
+        public async Task<ReviewResponseDto> Handle(GetReviewQuery request, CancellationToken cancellationToken)
         {
             const string sql = @"SELECT r.Content, r.Rating
                                  FROM Reviews r
                                  WHERE r.Id = @ReviewId;";
             using var connection = _sqlConnectionFactory.CreateConnection();
-            var result = await connection.QuerySingleOrDefaultAsync<ReviewDto>(sql, new { request.ReviewId});
+            var result = await connection.QuerySingleOrDefaultAsync<ReviewResponseDto>(sql, new { request.ReviewId});
             return result;
         }
     }

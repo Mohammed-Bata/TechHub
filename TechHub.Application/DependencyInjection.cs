@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using TechHub.Application.Services;
 using TechHub.Application.Validators;
 
 namespace TechHub.Application
@@ -22,10 +21,6 @@ namespace TechHub.Application
 
             // In your application layer DI setup (e.g., AddApplication method)
             services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly, includeInternalTypes: true);
-
-            services.AddScoped<AddressService>();
-            services.AddScoped<OrderService>();
-            services.AddScoped<ReviewService>();
 
             return services;
         }

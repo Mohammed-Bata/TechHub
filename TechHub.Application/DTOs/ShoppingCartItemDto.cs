@@ -13,6 +13,6 @@ namespace TechHub.Application.DTOs
         public int Quantity { get; set; }
         public string ProductName { get; set; }
         public decimal Price { get; set; }
-        public decimal TotalPrice => Quantity * Price;
+        public decimal TotalPrice {  get; set; }
     }
 }

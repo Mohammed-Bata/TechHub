@@ -1,17 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using TechHub.Application.DTOs;
-using TechHub.Application.Interfaces;
 using TechHub.Application.ProductImages.Commands.AddProductImage;
 using TechHub.Application.ProductImages.Commands.DeleteProductImage;
 using TechHub.Application.ProductImages.Queries.GetProductImage;
 using TechHub.Application.ProductImages.Queries.GetProductImages;
-using TechHub.Domain.Entities;
-using TechHub.Infrastructure.Repositories;
-using TechHub.Infrastructure.Services;
+
 
 namespace TechHub.Api.Controllers
 {
@@ -27,10 +22,7 @@ namespace TechHub.Api.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [Authorize]
-        public async Task<ActionResult<List<ProductImageResponseDto>>> GetProductImages(Guid productId)
+        public async Task<ActionResult<IEnumerable<ProductImageResponseDto>>> GetProductImages(Guid productId)
         {
             var query = new GetProductImagesQuery(productId);
 
@@ -42,8 +34,6 @@ namespace TechHub.Api.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [Authorize]
         public async Task<ActionResult<ProductImageResponseDto>> GetProductImage(int id)
         {
             var query = new GetProductImageQuery(id);
@@ -55,9 +45,10 @@ namespace TechHub.Api.Controllers
 
         
         [HttpPost]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [Authorize]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<int>> PostProductImage(Guid productId, [FromForm] ProductImageDto productImageDto)
         {  
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}{HttpContext.Request.PathBase.Value}";
@@ -65,15 +56,14 @@ namespace TechHub.Api.Controllers
             var command = new AddProductImageCommand(productId, productImageDto, baseUrl);
             var ImageId = await _mediator.Send(command);
 
-            return ImageId; 
+            return CreatedAtAction(nameof(GetProductImage),new { id = ImageId });
         }
 
        
         [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> DeleteProductImage(int id)
         {        
             var command = new DeleteProductImageCommand(id);

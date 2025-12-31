@@ -9,6 +9,6 @@ namespace TechHub.Application.Interfaces
 {
     public interface IPaymentService
     {
-        Task<PaymentIntent> CreateOrUpdatePaymentIntent(string userId);
+        Task<PaymentIntent> CreateOrUpdatePaymentIntent(decimal cartPrice);
     }
 }

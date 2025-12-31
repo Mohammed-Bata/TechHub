@@ -13,14 +13,12 @@ namespace TechHub.Infrastructure.Services
     public class TokenService : ITokenService
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
         private string secretKey;
         private readonly AppDbContext _context;
 
-        public TokenService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, AppDbContext context)
+        public TokenService(UserManager<ApplicationUser> userManager, IConfiguration configuration, AppDbContext context)
         {
             _userManager = userManager;
-            _roleManager = roleManager;
             secretKey = configuration["ApiSettings:Secret"];
             _context = context;
         }
@@ -38,7 +36,6 @@ namespace TechHub.Infrastructure.Services
                     new Claim(ClaimTypes.Email, applicationUser.Email),
                     new Claim(ClaimTypes.Role, roles.FirstOrDefault()),
                     new Claim(JwtRegisteredClaimNames.Jti, jwtTokenId),
-                    //new Claim(JwtRegisteredClaimNames.Aud, "..."),
                 }),
                 Issuer = "TechHubAPI",
                 Audience = "TechHubClient",

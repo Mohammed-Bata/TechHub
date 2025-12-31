@@ -1,10 +1,6 @@
-﻿using FluentValidation;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Net;
 using System.Security.Claims;
 using TechHub.Application.Addresses.Commands.CreateAddress;
 using TechHub.Application.Addresses.Commands.DeleteAddress;
@@ -12,10 +8,7 @@ using TechHub.Application.Addresses.Commands.UpdateAddress;
 using TechHub.Application.Addresses.Queries.GetAddress;
 using TechHub.Application.Addresses.Queries.GetAddresses;
 using TechHub.Application.DTOs;
-using TechHub.Application.Interfaces;
-using TechHub.Application.Services;
-using TechHub.Domain.Entities;
-using TechHub.Infrastructure.Repositories;
+
 
 namespace TechHub.Api.Controllers
 {
@@ -34,12 +27,12 @@ namespace TechHub.Api.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [Authorize]
-        public async Task<IActionResult> GetAddresses()
+        public async Task<ActionResult<IEnumerable<AddressDto>>> GetAddresses()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var addresses = await _mediator.Send(new GetAddressesQuery(userId));
-            return Ok(addresses);
+            return addresses;
 
         }
 
@@ -48,13 +41,13 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize]
-        public async Task<IActionResult> GetAddress(int id)
+        public async Task<ActionResult<AddressDto>> GetAddress(int id)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             
             var address = await _mediator.Send(new GetAddressQuery(id, userId));
 
-            return Ok(address);
+            return address;
         }
 
        
@@ -63,7 +56,7 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Authorize]
-        public async Task<IActionResult> CreateAddress([FromBody] AddressDto addressDto)
+        public async Task<ActionResult<int>> CreateAddress([FromBody] AddressDto addressDto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var addressId = await _mediator.Send(new CreateAddressCommand(
@@ -73,7 +66,7 @@ namespace TechHub.Api.Controllers
                 addressDto.PostalCode,
                 userId));
 
-            return CreatedAtAction(nameof(GetAddress), new { id = addressId }, addressDto);
+            return addressId;
 
         }
 
@@ -83,7 +76,7 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Authorize]
-        public async Task<IActionResult> UpdateAddress(int id,
+        public async Task<ActionResult<int>> UpdateAddress(int id,
             [FromBody] AddressDto addressdto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -96,7 +89,7 @@ namespace TechHub.Api.Controllers
                 addressdto.PostalCode,
                 userId));
 
-            return Ok(addressId);
+            return addressId;
 
 
         }
@@ -108,7 +101,7 @@ namespace TechHub.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Authorize]
-        public async Task<IActionResult> DeleteAddress(int id)
+        public async Task<ActionResult> DeleteAddress(int id)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 

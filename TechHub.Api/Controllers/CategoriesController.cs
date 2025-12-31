@@ -25,83 +25,43 @@ namespace TechHub.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetCategoryById(int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<CategoryDto>> GetCategoryById(int id)
         {
             var query = new GetCategoryQuery(id);
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            var category = await _mediator.Send(query);
+            return category;
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> Index()
         {
             var query = new GetCategoriesQuery();
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            var categories = await _mediator.Send(query);
+            return categories;
         }
 
-
-            [HttpPost]
-            [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Create([FromBody] CategoryDto category)
+        public async Task<ActionResult<int>> Create([FromBody] CategoryDto category)
         {
             var command = new CreateCategoryCommand(category.Name);
             var Id = await _mediator.Send(command);
-            return CreatedAtAction(nameof(GetCategoryById), new { id = Id },category);
+            return Id;
 
         }
 
 
-        //    [HttpPut("{id}")]
-        //    [Authorize(Roles = "Admin")]
-        //    [ProducesResponseType(StatusCodes.Status200OK)]
-        //    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //    [ProducesResponseType(StatusCodes.Status404NotFound)]
-        //    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        //    public async Task<ActionResult<APIResponse>> Update(int id, [FromBody] CategoryDto categoryDto,
-        //        IValidator<CategoryDto> validator)
-        //    {
-        //        var validationResult = await validator.ValidateAsync(categoryDto);
+       
 
-        //        if (!validationResult.IsValid)
-        //        {
-        //            _response.StatusCode = HttpStatusCode.BadRequest;
-        //            _response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-        //            return BadRequest(_response);
-        //        }
-
-        //        if (await _unitOfWork.Categories.GetAsync(c => c.Name.ToLower() == categoryDto.Name.ToLower()) != null)
-        //        {
-        //            _response.StatusCode = HttpStatusCode.BadRequest;
-        //            _response.Errors.Add("Category already exists");
-        //            return BadRequest(_response);
-        //        }
-
-        //        var category = await _unitOfWork.Categories.GetAsync(c => c.Id == id);
-        //        if (category == null)
-        //        {
-        //            _response.StatusCode = HttpStatusCode.NotFound;
-        //            _response.Errors.Add("Category Not Found");
-        //            return NotFound();
-        //        }
-        //        category.Name = categoryDto.Name;
-        //        await _unitOfWork.SaveChangesAsync();
-        //        _response.Data = categoryDto;
-        //        _response.StatusCode = HttpStatusCode.OK;
-
-        //        await _cache.RemoveAsync("categories");
-
-        //        return Ok(_response);
-
-        //    }
-
-
-            [HttpDelete("{id}")]
-            [Authorize(Roles = "Admin")]
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

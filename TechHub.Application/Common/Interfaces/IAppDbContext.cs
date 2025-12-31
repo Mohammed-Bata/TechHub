@@ -17,7 +17,7 @@ namespace TechHub.Application.Common.Interfaces
         public DbSet<Category> Categories {get;}
         public DbSet<Review> Reviews {get; }
         public DbSet<Wishlist> Wishlists {get; }
-        public DbSet<AppUser> Users {get; }
+        //public DbSet<AppUser> Users {get; }
         public DbSet<ProductImage> ProductImages { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);

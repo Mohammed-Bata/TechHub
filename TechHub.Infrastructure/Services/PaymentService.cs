@@ -11,25 +11,17 @@ namespace TechHub.Infrastructure.Services
 {
     public class PaymentService :IPaymentService
     {
-        private readonly ICartRepository _ShoppingCartRepository;
-        public PaymentService(ICartRepository shoppingCartRepository, IConfiguration configuration)
+        public PaymentService(IConfiguration configuration)
         {
-            _ShoppingCartRepository = shoppingCartRepository;
             StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
         }
 
-        public async Task<PaymentIntent> CreateOrUpdatePaymentIntent(string userId)
+        public async Task<PaymentIntent> CreateOrUpdatePaymentIntent(decimal cartPrice)
         {
-            var cart = await _ShoppingCartRepository.GetCartWithItemsAsync(userId);
-            if (cart == null || !cart.Items.Any())
-            {
-                return null;
-            }
-
             var paymentIntentService = new PaymentIntentService();
             var options = new PaymentIntentCreateOptions
             {
-                Amount = (long)cart.Price * 100,
+                Amount = (long)cartPrice * 100,
                 Currency = "usd",
                 PaymentMethodTypes = new List<string> { "card" }
             };

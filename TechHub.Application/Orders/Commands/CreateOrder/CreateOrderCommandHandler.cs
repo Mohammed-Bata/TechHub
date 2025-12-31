@@ -17,12 +17,14 @@ namespace TechHub.Application.Orders.Commands.CreateOrder
         private readonly IAppDbContext _context;
         private readonly IPaymentService _paymentService;
         private readonly IEmailService _emailService;
+        private readonly IAuthService _authService;
 
-        public CreateOrderCommandHandler(IAppDbContext context, IPaymentService paymentService, IEmailService emailService)
+        public CreateOrderCommandHandler(IAppDbContext context, IPaymentService paymentService, IEmailService emailService, IAuthService authService)
         {
             _context = context;
             _paymentService = paymentService;
             _emailService = emailService;
+            _authService = authService;
         }
 
         public async Task<Guid> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -37,7 +39,7 @@ namespace TechHub.Application.Orders.Commands.CreateOrder
                 throw new Exception("Cart is empty.");
             }
 
-            var paymentIntent = await _paymentService.CreateOrUpdatePaymentIntent(request.UserId);
+            var paymentIntent = await _paymentService.CreateOrUpdatePaymentIntent(cart.Price);
 
             if (paymentIntent == null)
             {
@@ -82,9 +84,12 @@ namespace TechHub.Application.Orders.Commands.CreateOrder
             await _context.Orders.AddAsync(order);
             await _context.SaveChangesAsync(cancellationToken);
 
-            var user = await _context.Users.FindAsync(request.UserId);
+          
 
-            await _emailService.SendEmail(user.Email, "Order", "You Made Order");
+            var userEmail = await _authService.FindEmailByIdAsync(request.UserId);
+
+            //fake email
+            //await _emailService.SendEmail(userEmail, "Order", "You Made Order");
 
             return order.Id;
 
