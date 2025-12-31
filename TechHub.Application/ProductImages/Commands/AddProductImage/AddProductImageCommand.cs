@@ -8,6 +8,6 @@ using TechHub.Application.DTOs;
 
 namespace TechHub.Application.ProductImages.Commands.AddProductImage
 {
-    public record AddProductImageCommand(Guid ProductId,ProductImageDto ImageDto): IRequest<int>;
+    public record AddProductImageCommand(Guid ProductId,ProductImageDto ImageDto,string baseUrl): IRequest<int>;
 
 }

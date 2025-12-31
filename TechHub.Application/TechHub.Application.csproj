@@ -21,8 +21,4 @@
     <ProjectReference Include="..\TechHub.Domain\TechHub.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ProductImages\Commands\DeleteProductImage\" />
-  </ItemGroup>
-
 </Project>
