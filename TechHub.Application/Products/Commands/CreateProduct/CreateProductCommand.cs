@@ -8,6 +8,6 @@ using TechHub.Application.DTOs;
 
 namespace TechHub.Application.Products.Commands.CreateProduct
 {
-    public record CreateProductCommand(ProductDto productDto,string baseUrl):IRequest<Guid>;
+    public record CreateProductCommand(ProductDto ProductDto,string baseUrl):IRequest<Guid>;
    
 }

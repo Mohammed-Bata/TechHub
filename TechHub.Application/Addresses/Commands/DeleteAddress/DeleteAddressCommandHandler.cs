@@ -1,9 +1,4 @@
 ﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TechHub.Application.Common.Interfaces;
 using TechHub.Domain.Exceptions;
 
@@ -26,6 +21,7 @@ namespace TechHub.Application.Addresses.Commands.DeleteAddress
 
             if (address == null)
             {
+               
                 throw new NotFoundException("Address not found");
             }
             _context.Addresses.Remove(address);

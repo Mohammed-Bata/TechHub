@@ -4,37 +4,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TechHub.Application.DTOs;
 
-namespace TechHub.Application.Validators
+namespace TechHub.Application.Users.Commands.Register
 {
-    public class RegisterationRequestValidator : AbstractValidator<RegisterationRequest>
+    public class RegisterCommandValidator:AbstractValidator<RegisterCommand>
     {
-        public RegisterationRequestValidator()
+        public RegisterCommandValidator()
         {
-            RuleFor(x => x.FirstName)
+            RuleFor(x => x.model.FirstName)
                 .NotEmpty().WithMessage("First name is required.")
                 .Length(2, 50).WithMessage("First name must be between 3 and 50 characters.");
-            RuleFor(x => x.LastName)
+            RuleFor(x => x.model.LastName)
                 .NotEmpty().WithMessage("Last name is required.")
                 .Length(2, 50).WithMessage("Last name must be between 3 and 50 characters.");
-            RuleFor(x => x.UserName)
+            RuleFor(x => x.model.UserName)
                 .NotEmpty().WithMessage("User name is required.")
                 .Length(3, 50).WithMessage("User name must be between 3 and 50 characters.")
                 .Matches("^[a-zA-Z0-9]*$").WithMessage("User name can only contain letters and numbers.");
-            RuleFor(x => x.Email)
+            RuleFor(x => x.model.Email)
                 .NotEmpty().WithMessage("Email is required.")
                 .EmailAddress().WithMessage("Invalid email format.");
-            RuleFor(x => x.Password)
+            RuleFor(x => x.model.Password)
                 .NotEmpty().WithMessage("Password is required.")
                 .MinimumLength(6).WithMessage("Password must be at least 6 characters long.")
                 .Matches("[A-Z]").WithMessage("Password must contain at least one uppercase letter.")
                 .Matches("[a-z]").WithMessage("Password must contain at least one lowercase letter.")
                 .Matches("[^a-zA-Z0-9]").WithMessage("Password must contain at least one special character.");
-            RuleFor(x => x.ConfirmPassword)
+            RuleFor(x => x.model.ConfirmPassword)
                 .NotEmpty().WithMessage("Confirm password is required.")
-                .Equal(x => x.Password).WithMessage("Passwords do not match.");
-            RuleFor(x => x.DateOfBirth)
+                .Equal(x => x.model.Password).WithMessage("Passwords do not match.");
+            RuleFor(x => x.model.DateOfBirth)
                 .NotEmpty().WithMessage("Date of birth is required.")
                 .Must(BeAValidAge).WithMessage("You must be at least 18 years old.");
         }
@@ -46,5 +45,4 @@ namespace TechHub.Application.Validators
             return age >= 18;
         }
     }
-   
 }

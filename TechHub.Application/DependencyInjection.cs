@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using TechHub.Application.Validators;
+using TechHub.Application.Behaviors;
 
 namespace TechHub.Application
 {
@@ -17,7 +17,10 @@ namespace TechHub.Application
             var assembly = Assembly.GetExecutingAssembly();
 
             // MediatR
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
+            services.AddMediatR(cfg => {
+                cfg.RegisterServicesFromAssembly(assembly);
+                cfg.AddOpenBehavior(typeof(ValidationBehaviour<,>));
+                });
 
             // In your application layer DI setup (e.g., AddApplication method)
             services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly, includeInternalTypes: true);

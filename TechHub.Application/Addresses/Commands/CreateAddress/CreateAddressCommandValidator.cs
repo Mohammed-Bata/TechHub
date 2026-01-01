@@ -4,17 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TechHub.Application.DTOs;
 
-namespace TechHub.Application.Validators
+namespace TechHub.Application.Addresses.Commands.CreateAddress
 {
-    public class AddressDtoValidator : AbstractValidator<AddressDto>
+    public class CreateAddressCommandValidator:AbstractValidator<CreateAddressCommand>
     {
-        public AddressDtoValidator()
-        {
+        public CreateAddressCommandValidator() {
             RuleFor(x => x.Street)
-                .NotEmpty().WithMessage("Street is required.")
-                .MaximumLength(100).WithMessage("Street cannot exceed 100 characters.");
+               .NotEmpty().WithMessage("Street is required.")
+               .MaximumLength(100).WithMessage("Street cannot exceed 100 characters.");
             RuleFor(x => x.City)
                 .NotEmpty().WithMessage("City is required.")
                 .MaximumLength(50).WithMessage("City cannot exceed 50 characters.");
@@ -26,5 +24,4 @@ namespace TechHub.Application.Validators
                 .Matches(@"^\d{5}$").WithMessage("Postal code must be exactly 5 digits.");
         }
     }
-    
 }

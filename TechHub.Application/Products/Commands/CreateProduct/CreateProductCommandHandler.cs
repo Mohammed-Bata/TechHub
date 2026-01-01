@@ -23,17 +23,17 @@ namespace TechHub.Application.Products.Commands.CreateProduct
         {
             var product = new TechHub.Domain.Entities.Product
             {
-                Name = request.productDto.Name,
-                Description = request.productDto.Description,
-                Price = request.productDto.Price,
-                StockAmount = request.productDto.StockAmount,
-                Brand = request.productDto.Brand,
-                CategoryId = request.productDto.CategoryId,
-                ProductCode = request.productDto.ProductCode,
+                Name = request.ProductDto.Name,
+                Description = request.ProductDto.Description,
+                Price = request.ProductDto.Price,
+                StockAmount = request.ProductDto.StockAmount,
+                Brand = request.ProductDto.Brand,
+                CategoryId = request.ProductDto.CategoryId,
+                ProductCode = request.ProductDto.ProductCode,
             };
 
             //Image handling 
-            string imageName = Guid.NewGuid().ToString() + Path.GetExtension(request.productDto.CoverImage.FileName);
+            string imageName = Guid.NewGuid().ToString() + Path.GetExtension(request.ProductDto.CoverImage.FileName);
             string imagePath = @"wwwroot/images/" + imageName;
             var directoryLocation = Path.Combine(Directory.GetCurrentDirectory(), imagePath);
             FileInfo file = new FileInfo(directoryLocation);
@@ -43,7 +43,7 @@ namespace TechHub.Application.Products.Commands.CreateProduct
             }
             using (var stream = new FileStream(directoryLocation, FileMode.Create))
             {
-                await request.productDto.CoverImage.CopyToAsync(stream);
+                await request.ProductDto.CoverImage.CopyToAsync(stream);
             }
            
             product.ImageUrl = request.baseUrl + "/images/" + imageName;
@@ -54,7 +54,6 @@ namespace TechHub.Application.Products.Commands.CreateProduct
             await _context.SaveChangesAsync(cancellationToken);
             return product.Id;
         }
-
 
     }
 }
