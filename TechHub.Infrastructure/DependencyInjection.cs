@@ -15,11 +15,9 @@ namespace TechHub.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             AddPersistence(services, configuration);
-            AddCaching(services, configuration);
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<ICacheService, CacheService>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddScoped<IImageService, ImageService>();
 
@@ -44,14 +42,6 @@ namespace TechHub.Infrastructure
 
         }
 
-        private static void AddCaching(IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = configuration.GetConnectionString("Cache");
-                options.InstanceName = "Redis_";
-            });
-            services.AddSingleton<ICacheService, CacheService>();
-        }
+      
     }
 }
