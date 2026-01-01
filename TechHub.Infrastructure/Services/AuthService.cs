@@ -42,14 +42,28 @@ namespace TechHub.Infrastructure.Services
             return user;
         }
 
-        public async Task<bool> CheckPasswordAsync(string userId, string password)
+        public async Task<AppUser> CheckPasswordAsync(string email, string password)
         {
-            var applicationUser = await _userManager.FindByIdAsync(userId);
+
+            var applicationUser = await _userManager.FindByEmailAsync(email);
             if (applicationUser == null)
             {
-                return false;
+                return null;
             }
-            return await _userManager.CheckPasswordAsync(applicationUser, password);
+            var result = await _userManager.CheckPasswordAsync(applicationUser, password);
+
+            if (result == false)
+            {
+                return null;
+            }
+            return new AppUser
+            {
+                Id = applicationUser.Id,
+                FirstName = applicationUser.FirstName,
+                LastName = applicationUser.LastName,
+                Email = applicationUser.Email,
+                DateOfBirth = applicationUser.DateOfBirth
+            };
 
         }
 
@@ -60,49 +74,7 @@ namespace TechHub.Infrastructure.Services
             return user.Email;
         }
 
-        //public async Task<Tokens> Login(LoginRequest request)
-        //{
-        //var applicationUser = await _userManager.FindByEmailAsync(request.Email);
-        //if (applicationUser == null)
-        //{
-        //    return null;
-        //}
-        //var user = new AppUser
-        //{
-        //    Id = applicationUser.Id,
-        //    FirstName = applicationUser.FirstName,
-        //    LastName = applicationUser.LastName,
-        //    Email = applicationUser.Email,
-        //    DateOfBirth = applicationUser.DateOfBirth
-        //};
-
-
-        //var user = await _userRepository.GetByEmailAsync(request.Email);
-        //if (user == null)
-        //{
-        //    return new Tokens();
-        //}
-        //var isValid = await _userManager.CheckPasswordAsync(applicationUser, request.Password);
-        //var isValid = await _userRepository.CheckPasswordAsync(user, request.Password);
-        //if (!isValid)
-        //{
-        //    return new Tokens();
-        //}
-
-        //    var jwtTokenId = Guid.NewGuid().ToString();
-        //    var accessToken = await _tokenService.GetAccessToken(user, jwtTokenId);
-        //    var refreshToken = await _tokenService.CreateNewRefreshToken(user.Id, jwtTokenId);
-
-        //    Tokens tokens = new()
-        //    {
-        //        AccessToken = accessToken,
-        //        RefreshToken = refreshToken
-        //    };
-        //    return tokens;
-
-        //}
-
-
+        
         public async Task<bool> IsEmailUniqueAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email) == null;
@@ -135,60 +107,7 @@ namespace TechHub.Infrastructure.Services
 
         }
 
-        //public async Task<AppUser> Register(RegisterationRequest request)
-        //{
-        //    var user = new AppUser
-        //    {
-        //        FirstName = request.FirstName,
-        //        LastName = request.LastName,
-        //        Email = request.Email,
-        //        DateOfBirth = request.DateOfBirth,
-        //        UserName = request.UserName
-        //    };
-        //    var result = await _userManager.FindByEmailAsync(request.Email) == null &&
-        //                 await _userManager.FindByNameAsync(request.UserName) == null;
-
-        //    if (result)
-        //    {
-        //        var applicationUser = new ApplicationUser
-        //        {
-        //            FirstName = user.FirstName,
-        //            LastName = user.LastName,
-        //            Email = user.Email,
-        //            UserName = user.UserName,
-        //            DateOfBirth = user.DateOfBirth
-        //        };
-
-        //       var result2 = await _userManager.CreateAsync(applicationUser, request.Password);
-
-        //        if (!result2.Succeeded)
-        //        {
-        //            throw new Exception("User creation failed: " + string.Join(", ", result2.Errors.Select(e => e.Description)));
-        //        }
-
-        //        //user = await _userRepository.AddUser(user, request.Password);
-        //        if (user == null)
-        //        {
-        //            throw new Exception("User creation failed");
-        //        }
-        //        else
-        //        {
-        //            if (!_roleManager.RoleExistsAsync("Admin").GetAwaiter().GetResult())
-        //            {
-        //                await _roleManager.CreateAsync(new IdentityRole("Admin"));
-        //                await _roleManager.CreateAsync(new IdentityRole("Customer"));
-        //            }
-        //          applicationUser = await _userManager.FindByEmailAsync(user.Email);
-        //            if (applicationUser != null)
-        //            {
-        //                await _userManager.AddToRoleAsync(applicationUser, "Customer");
-        //            }
-        //            return user;
-        //        }
-                   
-        //    }
-        //    return new AppUser();
-        //}
+       
     }
 
 }

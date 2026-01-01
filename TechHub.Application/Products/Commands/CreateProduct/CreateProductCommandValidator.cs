@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TechHub.Application.Common;
 
 namespace TechHub.Application.Products.Commands.CreateProduct
 {
@@ -46,6 +47,8 @@ namespace TechHub.Application.Products.Commands.CreateProduct
             RuleFor(x => x.ProductDto.CoverImage)
                 .NotNull()
                 .WithMessage("Cover image file is required.")
+                .Must(file => ImageValidator.IsValidImage(file))
+                .WithMessage("Invalid image file. Only JPG, PNG, and WebP are allowed")
                 .Must(file => file.Length > 0 && file.Length <= 5 * 1024 * 1024) // Max size: 5 MB
                 .WithMessage("Cover image file size must be less than or equal to 5 MB.");
 

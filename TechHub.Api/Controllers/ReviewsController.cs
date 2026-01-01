@@ -62,7 +62,7 @@ namespace TechHub.Api.Controllers
                 reviewDto.Rating
             );
             var reviewId = await _mediator.Send(command);
-            return CreatedAtAction(nameof(GetReview), new { id = reviewId });
+            return CreatedAtAction(nameof(GetReview), new { id = reviewId }, reviewId);
 
         }
 

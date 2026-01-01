@@ -15,7 +15,7 @@ namespace TechHub.Application.Interfaces
 
         Task<AppUser?> FindByEmailAsync(string email);
         Task<string> FindEmailByIdAsync(string userId);
-        Task<bool> CheckPasswordAsync(string userId, string password);
+        Task<AppUser?> CheckPasswordAsync(string email, string password);
         Task<bool> IsEmailUniqueAsync(string email);
         Task<bool> IsUsernameUniqueAsync(string username);
         Task<bool> CreateUserAsync(AppUser user,string password);

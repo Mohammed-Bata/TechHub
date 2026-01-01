@@ -22,15 +22,9 @@ namespace TechHub.Application.Users.Commands.Login
         public async Task<Tokens> Handle(LoginCommand command, CancellationToken cancellationToken)
         {
            
-            var user = await _authService.FindByEmailAsync(command.Email);
-
-            if (user is null)
-            {
-                throw new UnauthorizedAccessException("Invalid email or password.");
-            }
-
-            var isValidPassword = await _authService.CheckPasswordAsync(user.Id, command.Password);
-            if (!isValidPassword)
+          
+            var user = await _authService.CheckPasswordAsync(command.Email, command.Password);
+            if (user == null)
             {
                 throw new UnauthorizedAccessException("Invalid email or password.");
             }

@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using TechHub.Application.Behaviors;
+using TechHub.Application.Behaviours;
 
 namespace TechHub.Application
 {
@@ -20,6 +21,7 @@ namespace TechHub.Application
             services.AddMediatR(cfg => {
                 cfg.RegisterServicesFromAssembly(assembly);
                 cfg.AddOpenBehavior(typeof(ValidationBehaviour<,>));
+                cfg.AddOpenBehavior(typeof(LoggingBehaviour<,>));
                 });
 
             // In your application layer DI setup (e.g., AddApplication method)

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechHub.Application.Common.Interfaces;
+using TechHub.Domain.Exceptions;
 
 namespace TechHub.Application.Reviews.Commands.DeleteReview
 {
@@ -23,7 +24,11 @@ namespace TechHub.Application.Reviews.Commands.DeleteReview
                 _context.Reviews.Remove(review);
                 await _context.SaveChangesAsync(cancellationToken);
             }
-            return;
+            else
+            {
+               throw new NotFoundException("Review Not Found");
+            }
+                return;
         }
     }
 }

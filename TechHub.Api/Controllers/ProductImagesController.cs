@@ -56,7 +56,7 @@ namespace TechHub.Api.Controllers
             var command = new AddProductImageCommand(productId, productImageDto, baseUrl);
             var ImageId = await _mediator.Send(command);
 
-            return CreatedAtAction(nameof(GetProductImage),new { id = ImageId });
+            return CreatedAtAction(nameof(GetProductImage),new { id = ImageId },ImageId);
         }
 
        

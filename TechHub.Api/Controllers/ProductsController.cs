@@ -59,7 +59,7 @@ namespace TechHub.Api.Controllers
             var command = new CreateProductCommand(productDto, baseUrl);
 
             var productId = await _mediator.Send(command);
-            return CreatedAtAction(nameof(GetProduct),productId);
+            return CreatedAtAction(nameof(GetProduct), new { id = productId }, productId);
         }
 
        

@@ -61,32 +61,25 @@ namespace TechHub.Application.Orders.Commands.CreateOrder
                 }).ToList()
             };
 
-
-            var productIds = order.OrderItems.Select(p => p.ProductId).ToList();
-            List<Product> Products = new List<Product>();
-            foreach (var productId in productIds)
+            foreach (var item in cart.Items)
             {
-                var product = await _context.Products.FindAsync(productId);
-                Products.Add(product);
-            }
-
-            foreach (var orderItem in order.OrderItems)
-            {
-                var product = Products.FirstOrDefault(p => p.Id == orderItem.ProductId);
-                if (product == null || product.StockAmount < orderItem.Quantity)
+                var product = item.Product;
+                if (product == null || product.StockAmount < item.StockAmount)
                 {
-                   throw new Exception($"Product with ID {orderItem.ProductId} is out of stock.");
+                   throw new Exception($"Product with ID {product.Id} is out of stock.");
                 }
-                product.StockAmount -= orderItem.Quantity;
+                product.StockAmount -= item.Quantity;
                
             }
-            cart.Items.Clear();
+            
+            _context.CartItems.RemoveRange(cart.Items);
+           
             await _context.Orders.AddAsync(order);
             await _context.SaveChangesAsync(cancellationToken);
 
           
 
-            var userEmail = await _authService.FindEmailByIdAsync(request.UserId);
+            //var userEmail = await _authService.FindEmailByIdAsync(request.UserId);
 
             //fake email
             //await _emailService.SendEmail(userEmail, "Order", "You Made Order");

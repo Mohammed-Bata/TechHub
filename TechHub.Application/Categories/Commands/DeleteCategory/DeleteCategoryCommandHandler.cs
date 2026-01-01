@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechHub.Application.Common.Interfaces;
+using TechHub.Domain.Exceptions;
 
 namespace TechHub.Application.Categories.Commands.DeleteCategory
 {
@@ -20,7 +21,7 @@ namespace TechHub.Application.Categories.Commands.DeleteCategory
             var category = _context.Categories.FirstOrDefault(c => c.Id == request.Id);
             if (category == null)
             {
-                throw new Exception("Category not found");
+                throw new NotFoundException("Category not found");
             }
             _context.Categories.Remove(category);
             await _context.SaveChangesAsync(cancellationToken);

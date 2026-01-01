@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using TechHub.Application.Common.Interfaces;
+using TechHub.Domain.Exceptions;
 
 namespace TechHub.Application.Carts.Commands.RemoveFromCart
 {
@@ -26,12 +27,12 @@ namespace TechHub.Application.Carts.Commands.RemoveFromCart
                 .FirstOrDefaultAsync(cancellationToken);
             if (cart == null)
             {
-                throw new Exception("Cart not found");
+                throw new NotFoundException("Cart not found");
             }
             var item = cart.Items.FirstOrDefault(i => i.Id == request.ItemId);
             if (item == null)
             {
-                throw new Exception("Item not found in cart");
+                throw new NotFoundException("Item not found in cart");
             }
             cart.Items.Remove(item);
             await _context.SaveChangesAsync(cancellationToken);

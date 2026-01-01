@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TechHub.Application.Common.Interfaces;
 using TechHub.Application.DTOs;
+using TechHub.Domain.Exceptions;
 
 namespace TechHub.Application.Addresses.Queries.GetAddress
 {
@@ -27,6 +28,10 @@ namespace TechHub.Application.Addresses.Queries.GetAddress
 
             using var connection = _sqlConnectionFactory.CreateConnection();
             var result = await connection.QuerySingleOrDefaultAsync<AddressDto>(sql, new { request.Id, request.UserId });
+
+            if (result == null) {
+                throw new NotFoundException("Address Not Found");
+            }
             return result;
         }
     }

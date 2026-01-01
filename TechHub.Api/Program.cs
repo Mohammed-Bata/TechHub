@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
 using System.Threading.RateLimiting;
+using TechHub.Api;
 using TechHub.Api.ExceptionHandlers;
 using TechHub.Application;
 using TechHub.Infrastructure;
@@ -166,8 +167,9 @@ if (app.Environment.IsDevelopment())
         options.DisplayRequestDuration();
     });
 }
-
+app.UseMiddleware<RequestTimingMiddleware>();
 app.UseExceptionHandler();
+
 
 if (!app.Environment.IsDevelopment())
 {

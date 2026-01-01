@@ -24,7 +24,7 @@ namespace TechHub.Application.Carts.Queries.GetCart
             using var connection = _sqlConnectionFactory.CreateConnection();
             var sql = @"
                 SELECT c.Id, 
-                       ci.Id AS ItemId, ci.Quantity,
+                       ci.Id AS ItemId, ci.Quantity,ci.StockAmount,
                        p.Id AS ProductId, p.Name AS ProductName, p.Price,
                         (ci.Price * ci.Quantity) as TotalPrice
                 FROM Carts c

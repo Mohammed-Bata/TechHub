@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using TechHub.Application.Common;
 using TechHub.Application.Common.Interfaces;
 using TechHub.Application.Interfaces;
 using TechHub.Infrastructure.Services;
@@ -20,6 +21,7 @@ namespace TechHub.Infrastructure
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ICacheService, CacheService>();
             services.AddTransient<IEmailService, EmailService>();
+            services.AddScoped<IImageService, ImageService>();
 
             // Map both interfaces to the same implementation
             services.AddScoped<IAppDbContext>(sp =>

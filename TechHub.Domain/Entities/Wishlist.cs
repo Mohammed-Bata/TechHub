@@ -16,6 +16,6 @@ namespace TechHub.Domain.Entities
         public string Name { get; set; } = "Default Wishlist";
         public string UserId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public ICollection<ProductWishlist> Products { get; set; }
+        public ICollection<ProductWishlist> Products { get; set; } = new List<ProductWishlist>();
     }
 }

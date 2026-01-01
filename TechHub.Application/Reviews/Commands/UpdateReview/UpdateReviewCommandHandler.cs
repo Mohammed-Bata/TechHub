@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechHub.Application.Common.Interfaces;
+using TechHub.Domain.Exceptions;
 
 namespace TechHub.Application.Reviews.Commands.UpdateReview
 {
@@ -24,7 +25,11 @@ namespace TechHub.Application.Reviews.Commands.UpdateReview
                 review.Rating = request.Rating;
                 await _context.SaveChangesAsync(cancellationToken);
             }
-            return request.Id;
+            else
+            {
+                throw new NotFoundException("Review not found");
+            }
+                return request.Id;
         }
     }
 }

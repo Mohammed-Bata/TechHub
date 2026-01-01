@@ -65,7 +65,7 @@ namespace TechHub.Api.Controllers
 
             var orderId = await _mediator.Send(command);
 
-            return CreatedAtAction(nameof(GetOrder), new { id = orderId }); 
+            return CreatedAtAction(nameof(GetOrder), new { id = orderId },orderId); 
         }
     }
 }

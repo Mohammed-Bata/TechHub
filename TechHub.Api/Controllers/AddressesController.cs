@@ -66,7 +66,7 @@ namespace TechHub.Api.Controllers
                 addressDto.PostalCode,
                 userId));
 
-            return addressId;
+            return CreatedAtAction(nameof(GetAddress), new { id = addressId }, addressId);
 
         }
 
@@ -103,8 +103,6 @@ namespace TechHub.Api.Controllers
         [Authorize]
         public async Task<ActionResult> DeleteAddress(int id)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
             var addressId = await _mediator.Send(new DeleteAddressCommand(id));
 
             return NoContent();

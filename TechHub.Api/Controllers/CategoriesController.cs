@@ -53,7 +53,7 @@ namespace TechHub.Api.Controllers
         {
             var command = new CreateCategoryCommand(category.Name);
             var Id = await _mediator.Send(command);
-            return Id;
+            return CreatedAtAction(nameof(GetCategoryById), new { id = Id }, Id);
 
         }
 

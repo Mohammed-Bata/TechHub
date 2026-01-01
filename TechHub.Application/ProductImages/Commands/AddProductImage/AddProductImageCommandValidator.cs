@@ -1,14 +1,12 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TechHub.Application.Common;
 
 namespace TechHub.Application.ProductImages.Commands.AddProductImage
 {
     public class AddProductImageCommandValidator: AbstractValidator<AddProductImageCommand>
     {
+
+
         public AddProductImageCommandValidator()
         {
             RuleFor(x => x.ProductId)
@@ -17,8 +15,12 @@ namespace TechHub.Application.ProductImages.Commands.AddProductImage
             RuleFor(x => x.ImageDto.Image)
                 .NotNull()
                 .WithMessage("Image is required.")
-                .Must(file => file.Length > 0)
-                .WithMessage("Image must not be empty.");
+                .Must(file => ImageValidator.IsValidImage(file))
+                .WithMessage("Invalid image file. Only JPG, PNG, and WebP are allowed")
+                .Must(file => file.Length <= 5 * 1024 * 1024)
+                .WithMessage("File size must not exceed 5MB");
         }
+
+
     }
 }

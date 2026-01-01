@@ -13,7 +13,9 @@ namespace TechHub.Application.DTOs
          string? Brand,
          decimal? MinPrice,
          decimal? MaxPrice,
-         decimal? MinAverageRating
+         decimal? MinAverageRating,
+         int PageNumber =1,
+         int PageSize = 9
         );
     
 }

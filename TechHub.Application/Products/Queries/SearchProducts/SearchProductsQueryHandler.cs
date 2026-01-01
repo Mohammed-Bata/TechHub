@@ -28,15 +28,21 @@ namespace TechHub.Application.Products.Queries.SearchProducts
                      WHERE ProductId = p.Id) AS ImageUrlsString
                           FROM Products p
                           INNER JOIN Categories c ON p.CategoryId = c.Id
-                            LEFT JOIN ProductImages pi ON p.Id = pi.ProductId
                           WHERE (@Name IS NULL OR LOWER(p.Name) LIKE '%' + LOWER(@Name) + '%')
                             AND (@CategoryId IS NULL OR p.CategoryId = @CategoryId)
                             AND (@Description IS NULL OR LOWER(p.Description) LIKE '%' + LOWER(@Description) + '%')
                             AND (@Brand IS NULL OR LOWER(p.Brand) LIKE '%' + LOWER(@Brand) + '%')
                             AND (@MinPrice IS NULL OR p.Price >= @MinPrice)
                             AND (@MaxPrice IS NULL OR p.Price <= @MaxPrice)
-                            AND (@AverageRating IS NULL OR p.AverageRating >= @AverageRating);";
-            
+                            AND (@AverageRating IS NULL OR p.AverageRating >= @AverageRating)
+                            ORDER BY p.Name
+                            OFFSET @Offset ROWS
+                FETCH NEXT @PageSize ROWS ONLY;";
+
+   
+
+            var offset = (request.paras.PageNumber - 1) * request.paras.PageSize;
+     
             var products = await connection.QueryAsync<ProductResponseDto>(query, new
                 {
                 Name = request.paras.Name,
@@ -45,7 +51,9 @@ namespace TechHub.Application.Products.Queries.SearchProducts
                 Brand = request.paras.Brand,
                 MinPrice = request.paras.MinPrice,
                 MaxPrice = request.paras.MaxPrice,
-                AverageRating = request.paras.MinAverageRating
+                AverageRating = request.paras.MinAverageRating,
+                Offset = offset,
+                PageSize = request.paras.PageSize
             });
 
 

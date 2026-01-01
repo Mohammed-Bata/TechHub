@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TechHub.Application.Common;
 using TechHub.Application.Common.Interfaces;
 using TechHub.Domain.Exceptions;
 
@@ -13,10 +14,12 @@ namespace TechHub.Application.Products.Commands.UpdateProduct
     public class UpdateProductCommandHandler: IRequestHandler<UpdateProductCommand, Guid>
     {
         private readonly IAppDbContext _context;
+        private readonly IImageService _imageService;
 
-        public UpdateProductCommandHandler(IAppDbContext context)
+        public UpdateProductCommandHandler(IAppDbContext context,IImageService imageService)
         {
             _context = context;
+            _imageService = imageService;
         }
 
         public async Task<Guid> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
@@ -36,31 +39,37 @@ namespace TechHub.Application.Products.Commands.UpdateProduct
 
 
             // Image handling
-            if (request.ProductDto.CoverImage != null)
-            {
-                // Delete old image if exists
-                if (!string.IsNullOrEmpty(product.ImageLocalPath))
-                {
-                    var oldImageFile = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), product.ImageLocalPath));
-                    if (oldImageFile.Exists)
-                    {
-                        oldImageFile.Delete();
-                    }
-                }
 
-                string filename = Guid.NewGuid().ToString() + Path.GetExtension(request.ProductDto.CoverImage.FileName);
-                string imagepath = @"wwwroot\images\" + filename;
+            //if (request.ProductDto.CoverImage is null)
+            //{
+            //    throw new Exception("No Image Uploaded");
+            //}
+            //// Delete old image if exists
+            //if (!string.IsNullOrEmpty(product.ImageLocalPath))
+            //{
+            //    var oldImageFile = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), product.ImageLocalPath));
+            //    if (oldImageFile.Exists)
+            //    {
+            //        oldImageFile.Delete();
+            //    }
+            //}
 
-                var directoryLocation = Path.Combine(Directory.GetCurrentDirectory(), imagepath);
+            //    string filename = Guid.NewGuid().ToString() + Path.GetExtension(request.ProductDto.CoverImage.FileName);
+            //    string imagepath = @"wwwroot\images\" + filename;
 
-                using (var filestream = new FileStream(directoryLocation, FileMode.Create))
-                {
-                    await request.ProductDto.CoverImage.CopyToAsync(filestream);
-                }
+            //    var directoryLocation = Path.Combine(Directory.GetCurrentDirectory(), imagepath);
+
+            //    using (var filestream = new FileStream(directoryLocation, FileMode.Create))
+            //    {
+            //        await request.ProductDto.CoverImage.CopyToAsync(filestream);
+            //    }
+
+            var paths = await _imageService.UploadImage(request.ProductDto.CoverImage, request.baseUrl);
+
                
-                product.ImageUrl = request.baseUrl + "/images/" + filename;
-               product.ImageLocalPath = imagepath;
-            }
+                product.ImageUrl = paths.ImageUrl;
+               product.ImageLocalPath = paths.ImageLocalPath;
+        
             await _context.SaveChangesAsync(cancellationToken);
             return product.Id;
         }
